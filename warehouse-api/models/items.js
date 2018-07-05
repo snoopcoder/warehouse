@@ -16,9 +16,10 @@ const crud = {
     return products[0];
   },
   getContent: async id => {
-    let products = await query(`SELECT * FROM relation WHERE box=?`, [
-      Number(id)
-    ]);
+    let products = await query(
+      `SELECT relation.id as rel_id, items.id as item_id, relation.date as date, items.name as name,items.curr_count as item_count  FROM relation join items on  relation.item = items.id  WHERE box=?`,
+      [Number(id)]
+    );
     return products;
   },
   create: async function({ id, name, price = 0, currency = "UAH" }) {

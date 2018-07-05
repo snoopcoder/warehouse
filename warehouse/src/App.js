@@ -12,35 +12,11 @@
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import React, { Component } from "react";
 import logo from "./logo.svg";
-import "./common.css";
-import "./header.css";
-import "./ticket-table.css";
 //https://habr.com/company/devexpress/blog/283314/
 import "./App.css";
-//let array =[];
-let array = [
-  {
-    name: "обжимка",
-    img: "",
-    text: "",
-    date: "10.11.2017",
-    count: 1
-  },
-  {
-    name: "гвозди",
-    img: "",
-    text: "",
-    date: "3.12.2017",
-    count: 1
-  },
-  {
-    name: "молоток",
-    img: "",
-    text: "",
-    date: "4.12.2017",
-    count: 0
-  }
-];
+import ContentTable from "./component/ContentTable.js";
+import ParentList from "./component/ParentList.js";
+import Breadcrumbs from "./component/Breadcrumbs.js";
 
 class App extends Component {
   render() {
@@ -60,52 +36,156 @@ class App extends Component {
 }
 
 class BOX extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      count: 1
-    };
-    console.log("print");
-    console.log(this.props);
+  state = {
+    ItemsArr: { rigs: [] },
+    DataOld: 0
+  };
+
+  //проверить коробка это или нет
+  // вывести содержимое если это коробка
+
+  //определить три раскладки
+  //1 рутовые помещения, со списком заканчивающихся вещей(последняя очередь)
+  //2 раскладка для коробки
+  //3 раскладка для конкретнгого айтема
+  //
+
+  nextItem = value => {
+    this.setState({ name: value });
+  };
+
+  updateData = value => {
+    this.setState({ name: value });
+  };
+
+  getData = url => {
+    return fetch(url)
+      .then(response => response.json())
+      .catch(function(e) {
+        console.log(e);
+      });
+  };
+  asyncLoadData = async id => {
+    let JSONcur = await this.getData(
+      "http://127.0.0.1:3001/content/" + id //this.props.match.params.id
+    );
+    //let Now = moment();
+    //let DataTime = moment(JSONcur.rigs[0].ondate);
+    //let SecDiffdate = Now.diff(DataTime, "seconds");
+    this.setState({
+      Items: JSONcur
+    });
+  };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    console.log("getDerivedStateFromProps");
+    //console.log(nextProps);
+
+    // Store prevId in state so we can compare when props change.
+    // Clear out previously-loaded data (so we don't render stale stuff).
+    if (nextProps.match.params.id !== prevState.prevId) {
+      console.log(
+        "getDerivedStateFromProps get change props",
+        nextProps.match.params.id
+      );
+      return {
+        Items: null,
+        prevId: nextProps.match.params.id
+      };
+    }
+    // No state update necessary
+    return null;
   }
-  test() {}
+
+  componentDidMount() {
+    console.log("componentDidMount", this.props.match.params.id);
+    this._loadAsyncData(this.props.match.params.id);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.Items === null) {
+      console.log("componentDidUpdate", this.props.match.params.id);
+      this._loadAsyncData(this.props.match.params.id);
+    }
+  }
+
+  // render() {
+  //   if (this.state.Items === null) {
+  //     // Render loading state ...
+  //     return <div>loading</div>;
+  //   } else {
+  //     // Render real UI ...
+  //     return (
+  //       <div>
+  //         <div>{this.props.match.params.id}</div>
+  //         <ContentTable Items={this.state.Items} />
+  //       </div>
+  //     );
+  //   }
+  // }
+
   render() {
+    let main = null;
+    if (this.state.Items === null) {
+      main = <div>loading</div>;
+    } else if (this.props.match.params.id == 0) {
+      main = <ParentList Items={this.state.Items} />;
+    } else {
+      main = (
+        <div>
+          <div>{this.props.match.params.id}</div>
+          <ContentTable Items={this.state.Items} />
+        </div>
+      );
+    }
+
     return (
-      <div className="ticket-table-wrapper">
-        <div>{this.test()}</div>
-        <table id="ticket-table">
-          <thead>
-            <tr>
-              <th />
-              <th>Фото</th>
-              <th>Название</th>
-              <th>количество</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {array.map((item, i) => (
-              <tr key={i}>
-                <td>
-                  <label className="checkbox">
-                    <input type="checkbox" />
-                    <div className="checkbox__text" />
-                  </label>
-                </td>
-                <td>
-                  <img src="/noimg_m.jpg" />
-                </td>
-                <td>
-                  <span> {item.name}</span>
-                </td>
-                <td>{item.count}</td>
-                <td> {item.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="WareHousePage">
+        <div className="WareHouseLeft" />
+        <div className="WareHouseMain"> {main}</div>
       </div>
     );
+  }
+
+  _loadAsyncData(id) {
+    if (id == 0) {
+      fetch("http://127.0.0.1:3001/root")
+        .then(response => response.json())
+        .then(JSONcur => {
+          this.setState({
+            Items: JSONcur
+          });
+        })
+        .catch(function(reason) {
+          console.log(reason);
+          // отказ
+        });
+    } else {
+      fetch("http://127.0.0.1:3001/content/" + id)
+        .then(response => response.json())
+        .then(JSONcur => {
+          this.setState({
+            Items: JSONcur
+          });
+        })
+        .catch(function(reason) {
+          console.log(reason);
+          // отказ
+        });
+    }
+
+    /*
+    fetch('https://randomuser.me/api/')
+      .then(response => response.json())
+      .then(data => {
+        const person = data.results[0];
+        this.setState({ name: `${person.name.first} ${person.name.last}` })
+      })*/
+
+    // this._asyncRequest = asyncLoadData(id).then(externalData => {
+    //   this._asyncRequest = null;
+    //   this.setState({ externalData });
+    // });
   }
 }
 
@@ -218,7 +298,13 @@ const Header = () => (
           <Link to="/roster">Roster</Link>
         </li>
         <li>
-          <Link to="/box/1">BOX</Link>
+          <Link to="/box/10">Коробка 1 (id=10)</Link>
+        </li>
+        <li>
+          <Link to="/box/6">Камера 6 (id=6)</Link>
+        </li>
+        <li>
+          <Link to="/box/0">root</Link>
         </li>
       </ul>
     </nav>
