@@ -3,6 +3,25 @@ var config = require("config");
 const tableName = config.item.tableName;
 
 const crud = {
+  getBreadcrumbs: async id => {
+    return query(
+      `with recursive cte (item,box ) as
+    (
+     select     item,
+                box            
+     from       relation
+     where      item = ?
+     union all
+     select     p.item,
+                p.box            
+     from       relation p
+     inner join cte
+             on p.item = cte.box
+    )
+    select box from cte;`,
+      [Number(id)]
+    );
+  },
   getROOT: async () => {
     return query(`SELECT * from ParentItem`);
   },

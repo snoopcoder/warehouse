@@ -4,7 +4,21 @@ const item = require("../models/items");
 
 router
   .get("/root", async (ctx, next) => {
-    ctx.body = await item.getROOT();
+    let result = await item.getROOT();
+    //ctx.body = await item.getROOT();
+    if (result) {
+      ctx.body = result;
+    } else {
+      ctx.status = 204;
+    }
+  })
+  .get("/breadcrumbs/:id", async (ctx, next) => {
+    let result = await item.getBreadcrumbs(ctx.params.id);
+    if (result) {
+      ctx.body = result;
+    } else {
+      ctx.status = 204;
+    }
   })
   .get("/item/:id", async (ctx, next) => {
     let result = await item.getItem(ctx.params.id);
