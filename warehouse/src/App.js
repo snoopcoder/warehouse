@@ -65,17 +65,17 @@ class BOX extends Component {
         console.log(e);
       });
   };
-  asyncLoadData = async id => {
-    let JSONcur = await this.getData(
-      "http://127.0.0.1:3001/content/" + id //this.props.match.params.id
-    );
-    //let Now = moment();
-    //let DataTime = moment(JSONcur.rigs[0].ondate);
-    //let SecDiffdate = Now.diff(DataTime, "seconds");
-    this.setState({
-      Items: JSONcur
-    });
-  };
+  // asyncLoadData = async id => {
+  //   let JSONcur = await this.getData(
+  //     "http://127.0.0.1:3001/content/" + id //this.props.match.params.id
+  //   );
+  //   //let Now = moment();
+  //   //let DataTime = moment(JSONcur.rigs[0].ondate);
+  //   //let SecDiffdate = Now.diff(DataTime, "seconds");
+  //   this.setState({
+  //     Items: JSONcur
+  //   });
+  // };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     console.log("getDerivedStateFromProps");
@@ -133,8 +133,8 @@ class BOX extends Component {
     } else {
       main = (
         <div>
-          <div>{this.props.match.params.id}</div>
-          <ContentTable Items={this.state.Items} />
+          <Breadcrumbs Items={this.state.Items.breadcrumbs} />
+          <ContentTable Items={this.state.Items.content} />
         </div>
       );
     }
@@ -161,31 +161,38 @@ class BOX extends Component {
           // отказ
         });
     } else {
-      fetch("http://127.0.0.1:3001/content/" + id)
-        .then(response => response.json())
-        .then(JSONcur => {
+      fetch("http://127.0.0.1:3001/item/" + id)
+        .then(itemDataStream => itemDataStream.json())
+        .then(itemData => {
           this.setState({
-            Items: JSONcur
+            Items: itemData
           });
         })
         .catch(function(reason) {
           console.log(reason);
           // отказ
         });
+
+      // let contentPromis = fetch("http://127.0.0.1:3001/content/" + id);
+      // let breadcrumbsPromis = fetch("http://127.0.0.1:3001/breadcrumbs/" + id);
+      /*
+      определить 
+      имя 
+      тип
+      */
+      // Promise.all([contentPromis, breadcrumbsPromis])
+      //   .then(data => {
+      //     let contentPromis = data[0].json();
+      //     let breadcrumbsPromis = data[1].json();
+      //     return Promise.all([contentPromis, breadcrumbsPromis]);
+      //   })
+      //   .then(data => {
+      //     this.setState({
+      //       Items: data[0],
+      //       BreadcrumbsItems: data[1]
+      //     });
+      //   });
     }
-
-    /*
-    fetch('https://randomuser.me/api/')
-      .then(response => response.json())
-      .then(data => {
-        const person = data.results[0];
-        this.setState({ name: `${person.name.first} ${person.name.last}` })
-      })*/
-
-    // this._asyncRequest = asyncLoadData(id).then(externalData => {
-    //   this._asyncRequest = null;
-    //   this.setState({ externalData });
-    // });
   }
 }
 

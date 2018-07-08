@@ -7,7 +7,6 @@ class ParentList extends Component {
       <ul>
         {this.props.Items.map((item, i) => (
           <li key={i}>
-            {" "}
             <Link to={"/box/" + item.id}>{item.name}</Link>
           </li>
         ))}
