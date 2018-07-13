@@ -14,9 +14,7 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 //https://habr.com/company/devexpress/blog/283314/
 import "./App.css";
-import ContentTable from "./component/ContentTable.js";
-import ParentList from "./component/ParentList.js";
-import Breadcrumbs from "./component/Breadcrumbs.js";
+import WarehouseMain from "./component/WarehouseMain.js";
 
 class App extends Component {
   render() {
@@ -27,172 +25,10 @@ class App extends Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <div>
-          <Header />
           <Main />
         </div>
       </div>
     );
-  }
-}
-
-class BOX extends Component {
-  state = {
-    ItemsArr: { rigs: [] },
-    DataOld: 0
-  };
-
-  //проверить коробка это или нет
-  // вывести содержимое если это коробка
-
-  //определить три раскладки
-  //1 рутовые помещения, со списком заканчивающихся вещей(последняя очередь)
-  //2 раскладка для коробки
-  //3 раскладка для конкретнгого айтема
-  //
-
-  nextItem = value => {
-    this.setState({ name: value });
-  };
-
-  updateData = value => {
-    this.setState({ name: value });
-  };
-
-  getData = url => {
-    return fetch(url)
-      .then(response => response.json())
-      .catch(function(e) {
-        console.log(e);
-      });
-  };
-  // asyncLoadData = async id => {
-  //   let JSONcur = await this.getData(
-  //     "http://127.0.0.1:3001/content/" + id //this.props.match.params.id
-  //   );
-  //   //let Now = moment();
-  //   //let DataTime = moment(JSONcur.rigs[0].ondate);
-  //   //let SecDiffdate = Now.diff(DataTime, "seconds");
-  //   this.setState({
-  //     Items: JSONcur
-  //   });
-  // };
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    console.log("getDerivedStateFromProps");
-    //console.log(nextProps);
-
-    // Store prevId in state so we can compare when props change.
-    // Clear out previously-loaded data (so we don't render stale stuff).
-    if (nextProps.match.params.id !== prevState.prevId) {
-      console.log(
-        "getDerivedStateFromProps get change props",
-        nextProps.match.params.id
-      );
-      return {
-        Items: null,
-        prevId: nextProps.match.params.id
-      };
-    }
-    // No state update necessary
-    return null;
-  }
-
-  componentDidMount() {
-    console.log("componentDidMount", this.props.match.params.id);
-    this._loadAsyncData(this.props.match.params.id);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.Items === null) {
-      console.log("componentDidUpdate", this.props.match.params.id);
-      this._loadAsyncData(this.props.match.params.id);
-    }
-  }
-
-  // render() {
-  //   if (this.state.Items === null) {
-  //     // Render loading state ...
-  //     return <div>loading</div>;
-  //   } else {
-  //     // Render real UI ...
-  //     return (
-  //       <div>
-  //         <div>{this.props.match.params.id}</div>
-  //         <ContentTable Items={this.state.Items} />
-  //       </div>
-  //     );
-  //   }
-  // }
-
-  render() {
-    let main = null;
-    if (this.state.Items === null) {
-      main = <div>loading</div>;
-    } else if (this.props.match.params.id == 0) {
-      main = <ParentList Items={this.state.Items} />;
-    } else {
-      main = (
-        <div>
-          <Breadcrumbs Items={this.state.Items.breadcrumbs} />
-          <ContentTable Items={this.state.Items.content} />
-        </div>
-      );
-    }
-
-    return (
-      <div className="WareHousePage">
-        <div className="WareHouseLeft" />
-        <div className="WareHouseMain"> {main}</div>
-      </div>
-    );
-  }
-
-  _loadAsyncData(id) {
-    if (id == 0) {
-      fetch("http://127.0.0.1:3001/root")
-        .then(response => response.json())
-        .then(JSONcur => {
-          this.setState({
-            Items: JSONcur
-          });
-        })
-        .catch(function(reason) {
-          console.log(reason);
-          // отказ
-        });
-    } else {
-      fetch("http://127.0.0.1:3001/item/" + id)
-        .then(itemDataStream => itemDataStream.json())
-        .then(itemData => {
-          this.setState({
-            Items: itemData
-          });
-        })
-        .catch(function(reason) {
-          console.log(reason);
-          // отказ
-        });
-
-      // let contentPromis = fetch("http://127.0.0.1:3001/content/" + id);
-      // let breadcrumbsPromis = fetch("http://127.0.0.1:3001/breadcrumbs/" + id);
-      /*
-      определить 
-      имя 
-      тип
-      */
-      // Promise.all([contentPromis, breadcrumbsPromis])
-      //   .then(data => {
-      //     let contentPromis = data[0].json();
-      //     let breadcrumbsPromis = data[1].json();
-      //     return Promise.all([contentPromis, breadcrumbsPromis]);
-      //   })
-      //   .then(data => {
-      //     this.setState({
-      //       Items: data[0],
-      //       BreadcrumbsItems: data[1]
-      //     });
-      //   });
-    }
   }
 }
 
@@ -273,7 +109,8 @@ const Schedule = () => (
 
 const Home = () => (
   <div>
-    <h1>Welcome to the Tornadoes Website!</h1>
+    <h1>Скдадской учет</h1>
+    <Link to="/box/0">Начать</Link>
   </div>
 );
 
@@ -286,8 +123,8 @@ const Main = () => (
   <main>
     <Switch>
       <Route exact path="/" component={Home} />
-      <Route path="/roster" component={Roster} />
-      <Route path="/box/:id" component={BOX} />
+      <Route exact path="/box/:id" component={WarehouseMain} />
+      <Route path="/box/:id/:do" component={WarehouseMain} />
     </Switch>
   </main>
 );
@@ -297,23 +134,7 @@ const Main = () => (
 const Header = () => (
   <header>
     <nav>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/roster">Roster</Link>
-        </li>
-        <li>
-          <Link to="/box/10">Коробка 1 (id=10)</Link>
-        </li>
-        <li>
-          <Link to="/box/6">Камера 6 (id=6)</Link>
-        </li>
-        <li>
-          <Link to="/box/0">root</Link>
-        </li>
-      </ul>
+      <Link to="/box/0">root</Link>
     </nav>
   </header>
 );
