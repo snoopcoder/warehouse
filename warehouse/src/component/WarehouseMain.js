@@ -5,7 +5,10 @@ import ContentTable from "./ContentTable.js";
 import ParentList from "./ParentList.js";
 import Breadcrumbs from "./Breadcrumbs.js";
 import ItemCard from "./ItemCard.js";
+import NewItemCard from "./NewItemCard.js";
 import { Button } from "semantic-ui-react";
+import update from "immutability-helper";
+
 class WarehouseMain extends Component {
   state = {
     ItemsArr: { rigs: [] },
@@ -48,9 +51,97 @@ class WarehouseMain extends Component {
   //   });
   // };
 
+  /*
+
+        this.state.Items.breadcrumbs.push({
+        BOX: this.props.match.params.id,
+        name: this.state.Items.name
+      });
+
+
+
+      //проверим breadscram
+    if (
+      this.state.Items &&
+      this.state.Items.breadcrumbs &&
+      this.state.Items.breadcrumbs.length > 0
+    ) {
+      if (
+        this.props.match.params.id ==
+        this.state.Items.breadcrumbs[this.state.Items.breadcrumbs.length - 1]
+          .BOX
+      ) {
+        let Arr = this.state.Items.breadcrumbs;
+        Arr.pop();
+
+        const Items = update(this.state.Items, { breadcrumbs: { $set: Arr } });
+        this.setState({ Items });
+      }
+    }
+     */
+
   static getDerivedStateFromProps(nextProps, prevState) {
     console.log("getDerivedStateFromProps");
-    //console.log(nextProps);
+
+    let _Do = prevState.prevDo;
+    if (!prevState.hasOwnProperty("prevDo")) {
+      _Do = "show";
+    }
+
+    //определить что сейчас происходит переход и нужень контроль breadscrambs
+    //скоректировать bredscrambs если нужно
+    if (
+      prevState.hasOwnProperty("prevDo") &&
+      prevState.prevDo === "show" &&
+      nextProps.match.params.do === "new"
+    ) {
+      // происходит смена режима работы с show на add
+      _Do = "new";
+      // Нужна корректировка breadscrambs если ее еще не было
+      let Arr = prevState.Items;
+      if (
+        prevState.Items.breadcrumbs.length === 0 ||
+        prevState.Items.breadcrumbs[prevState.Items.breadcrumbs.length - 1]
+          .id !== nextProps.match.params.id
+      ) {
+        Arr.breadcrumbs.push({
+          BOX: nextProps.match.params.id,
+          name: Arr.name
+        });
+      }
+
+      //Ниже есть обработка смены id если она произошла то пойдем к ней
+      if (nextProps.match.params.id === prevState.prevId) {
+        return {
+          Items: Arr,
+          prevDo: _Do
+        };
+      }
+    }
+    if (
+      prevState.hasOwnProperty("prevDo") &&
+      prevState.prevDo === "new" &&
+      nextProps.match.params.hasOwnProperty("do") === false
+    ) {
+      // происходит смена режима работы с new на show
+      // Нужна корректировка breadscrambs если ее еще не было
+
+      let Arr = prevState.Items;
+      if (
+        prevState.Items.breadcrumbs.length !== 0 ||
+        prevState.Items.breadcrumbs[prevState.Items.breadcrumbs.length - 1]
+          .id === nextProps.match.params.id
+      ) {
+        Arr.breadcrumbs.pop();
+      }
+      _Do = "show";
+      //Ниже есть обработка смены id если она произошла то пойдем к ней
+      if (nextProps.match.params.id === prevState.prevId) {
+        return {
+          prevDo: _Do
+        };
+      }
+    }
 
     // Store prevId in state so we can compare when props change.
     // Clear out previously-loaded data (so we don't render stale stuff).
@@ -61,7 +152,8 @@ class WarehouseMain extends Component {
       );
       return {
         Items: null,
-        prevId: nextProps.match.params.id
+        prevId: nextProps.match.params.id,
+        prevDo: _Do
       };
     }
     // No state update necessary
@@ -97,6 +189,7 @@ class WarehouseMain extends Component {
 
   render() {
     let main = null;
+    //условный рендеринг
     if (this.state.Items === null) {
       //не загружены данные отображаем калач
       main = <div>loading</div>;
@@ -130,7 +223,7 @@ class WarehouseMain extends Component {
             Items={this.state.Items.breadcrumbs}
             Name={"Новый предмет"}
           />
-          <div>New elem form</div>
+          <NewItemCard />
         </div>
       );
     } else {

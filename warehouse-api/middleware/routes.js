@@ -1,5 +1,4 @@
 const router = require("koa-router")();
-const koaBody = require("koa-body");
 const item = require("../models/items");
 
 router
@@ -36,11 +35,11 @@ router
       ctx.status = 204;
     }
   })
-  .post("/item", koaBody(), async (ctx, next) => {
+  .post("/item", async (ctx, next) => {
     ctx.status = 201;
     ctx.body = await item.create(ctx.request.body);
   })
-  .put("/item/:id", koaBody(), async (ctx, next) => {
+  .put("/item/:id", async (ctx, next) => {
     ctx.status = 204;
     await item.update(ctx.params.id, ctx.request.body);
   })
