@@ -1,5 +1,7 @@
 const router = require("koa-router")();
 const item = require("../models/items");
+var multer = require("koa-multer");
+const upload = multer();
 
 router
   .get("/root", async (ctx, next) => {
@@ -35,9 +37,9 @@ router
       ctx.status = 204;
     }
   })
-  .post("/item",  async (ctx, next) => {
-    ctx.body = ctx.request.body;
-    ctx.status = 201;
+  .post("/item", async (req, res, next) => {
+    let body = req.body;
+    req.status = 201;
     //ctx.body = await item.create(ctx.request.body);
   })
   .put("/item/:id", async (ctx, next) => {
