@@ -8,6 +8,9 @@ class NewItemCard extends Component {
 
     fetch("http://127.0.0.1:3001/item", {
       method: "POST",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
       body: data
     });
   }
