@@ -12,6 +12,7 @@
     "koa-router": "^7.4.0",
     "mysql-query-js": "^0.1.2",
     "mysql-query-promise": "^1.0.1",
-    "mysql2": "^1.5.3"
+    "mysql2": "^1.5.3",
+    "node-uuid": "^1.4.8"
   }
 }

@@ -1,7 +1,37 @@
 const router = require("koa-router")();
 const item = require("../models/items");
 var multer = require("koa-multer");
-const upload = multer();
+const asyncBusboy = require("async-busboy");
+const fs = require('fs');
+var uuid = require('node-uuid');
+
+var config = require("config");
+const FileDir = config.files.dir;
+
+function MoveFile(path, name) {
+  let promise = new Promise((resolve, reject) => {
+    let filename = uuid.v4() + ".jpg";
+    fs.rename(path, FileDir + filename, (err) => {
+      if (err)
+        reject(err);
+      console.log('Rename complete!');
+      resolve(filename);
+    });
+  });
+  return promise;
+}
+
+function DeleteFile(path) {
+  let promise = new Promise((resolve, reject) => {
+    fs.unlink(path, function (error) {
+      if (error) {
+        reject(error);
+      }
+      resolve();
+    });
+  });
+  return promise;
+}
 
 router
   .get("/root", async (ctx, next) => {
@@ -37,10 +67,28 @@ router
       ctx.status = 204;
     }
   })
-  .post("/item", async (req, res, next) => {
-    let body = req.body;
-    req.status = 201;
-    //ctx.body = await item.create(ctx.request.body);
+  .post("/item", async (ctx, next) => {
+    let warnings = '';
+    const { files, fields } = await asyncBusboy(ctx.req);
+    let fname = '';
+    if (files.length > 0) {
+      fname = files[0].filename;
+      let ftempfullpath = files[0].path;
+      files[0].destroy();
+      if (files[0].mimeType == "image/jpeg") {
+
+        fname = await MoveFile(ftempfullpath, fname);
+      }
+      else {
+        await DeleteFile(ftempfullpath);
+        warnings = "wrong file type";
+        fname = '';
+      }
+
+    };
+    await item.create({ fname });
+    ctx.status = 201;
+    ctx.body = "dfdffd";
   })
   .put("/item/:id", async (ctx, next) => {
     ctx.status = 204;
@@ -52,3 +100,7 @@ router
   });
 
 module.exports = router.routes.bind(router);
+module.exports.allowedMethods = router.allowedMethods.bind(router);
+
+
+

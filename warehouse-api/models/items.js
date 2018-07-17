@@ -90,7 +90,9 @@ const crud = {
     );
     return products;
   },
-  create: async function({ id, name, price = 0, currency = "UAH" }) {
+  //create: async function({ id, name, price = 0, currency = "UAH" }) {
+  create: async function ({ fname }) {
+    /*
     let product = {
       name: String(name),
       price: Number(price),
@@ -103,6 +105,7 @@ const crud = {
     );
     if (result.insertId) id = result.insertId;
     return crud.get(id);
+    */
   },
   update: async (id, product) => {
     if (typeof product === "object") {
