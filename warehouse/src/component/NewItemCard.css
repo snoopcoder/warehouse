@@ -1,0 +1,8 @@
+.NewItemCard {
+    display: flex;
+    flex-direction: column;
+}
+
+.NewItemCard > .NewItemCardComment {order: 3; } /* Отобразится третьим */
+.NewItemCard > .NewItemCardCount {order: 2; } /* Отобразится вторым  */
+.NewItemCard > .NewItemCardCaption {order: 1; } /* Отобразится первым  */

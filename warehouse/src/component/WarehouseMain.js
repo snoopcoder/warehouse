@@ -6,6 +6,7 @@ import ParentList from "./ParentList.js";
 import Breadcrumbs from "./Breadcrumbs.js";
 import ItemCard from "./ItemCard.js";
 import NewItemCard from "./NewItemCard.js";
+import ImageUpload from "./ImageUpload.js";
 import { Button } from "semantic-ui-react";
 import update from "immutability-helper";
 
