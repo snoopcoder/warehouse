@@ -1,7 +1,7 @@
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import React, { Component } from "react";
 import ImageUpload from "./ImageUpload.js";
-import { Button, Input } from "semantic-ui-react";
+import { Button, Input, Dropdown, TextArea } from "semantic-ui-react";
 import "./semantic.min.css";
 import "./NewItemCard.css";
 
@@ -28,19 +28,43 @@ class NewItemCard extends Component {
           <label htmlFor="comment">Коментарий</label>
           <input id="comment" name="comment" type="text" /> */
   render() {
+    let stateOptions = [
+      { key: "one", value: "one", text: "1шт" },
+      { key: "much", value: "much", text: "много" },
+      { key: "few", value: "few", text: "мало" }
+    ];
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
           <div className="NewItemCard">
-            <ImageUpload />
-            <div className="NewItemCardCaption">
-              <Input placeholder="Название" />
+            <div className="image">
+              <ImageUpload />
             </div>
-            <div className="NewItemCardCount">
-              <Input placeholder="Количество" />
+            <div className="nameText name-count-comm-Text">Название</div>
+            <div className="nameInput name-count-comm-Input">
+              <Input
+                id="InputnameInput"
+                label={{ icon: "asterisk" }}
+                labelPosition="left corner"
+                placeholder="Короткое описание"
+              />
             </div>
-            <div className="NewItemCardComment">
-              <Input placeholder="Коментарий" />
+            <div className="countText name-count-comm-Text">Количество</div>
+            <div className="countInput name-count-comm-Input">
+              <Dropdown
+                placeholder="Количество"
+                selection
+                defaultValue="one"
+                options={stateOptions}
+              />
+            </div>
+            <div className="commText name-count-comm-Text">Комментарий</div>
+            <div className="commInput name-count-comm-Input">
+              <TextArea
+                id="TextAreacommInput"
+                autoHeight
+                placeholder="Можно внести необязательный комментарий"
+              />
             </div>
           </div>
 

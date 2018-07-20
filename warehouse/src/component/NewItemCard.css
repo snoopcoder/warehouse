@@ -1,8 +1,54 @@
 .NewItemCard {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+grid-gap: 2px;
+  grid-template-areas:
+    "image image"
+    "nameText nameInput"
+    "countText countInput"
+    "commText commInput";
+  grid-template-columns: 100px 500px ;
+  grid-template-rows: auto;
 }
 
-.NewItemCard > .NewItemCardComment {order: 3; } /* Отобразится третьим */
-.NewItemCard > .NewItemCardCount {order: 2; } /* Отобразится вторым  */
-.NewItemCard > .NewItemCardCaption {order: 1; } /* Отобразится первым  */
+
+#InputnameInput{
+    width: 300px;
+}
+#TextAreacommInput{
+    width: 400px;
+}
+.image {
+grid-area: image;
+display: flex;
+justify-content: flex-start;
+}
+
+.nameText {
+grid-area: nameText;
+}
+
+.nameInput {
+grid-area: nameInput;
+}
+.countText {    
+grid-area: countText;
+}
+.countInput {
+grid-area: countInput;
+}
+.commText {  
+grid-area: commText;
+}
+.name-count-comm-Text{
+    display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+}
+.name-count-comm-Input{
+    display: flex;
+    justify-content: flex-start;
+}
+.commInput {
+grid-area: commInput;  
+}
