@@ -1,11 +1,16 @@
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import React, { Component } from "react";
 import ImageUpload from "./ImageUpload.js";
-import { Button, Input, Dropdown, TextArea } from "semantic-ui-react";
+import { Button, Input, Dropdown, TextArea, Form } from "semantic-ui-react";
 import "./semantic.min.css";
 import "./NewItemCard.css";
 
 class NewItemCard extends Component {
+  handleUserInput(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    console.log(e);
+  }
   handleSubmit(event) {
     event.preventDefault();
     const data = new FormData(event.target);
@@ -44,9 +49,11 @@ class NewItemCard extends Component {
             <div className="nameInput name-count-comm-Input">
               <Input
                 id="InputnameInput"
+                name="InputnameInput"
                 label={{ icon: "asterisk" }}
                 labelPosition="left corner"
                 placeholder="Короткое описание"
+                onChange={this.handleUserInput}
               />
             </div>
             <div className="countText name-count-comm-Text">Количество</div>
@@ -60,15 +67,17 @@ class NewItemCard extends Component {
             </div>
             <div className="commText name-count-comm-Text">Комментарий</div>
             <div className="commInput name-count-comm-Input">
-              <TextArea
-                id="TextAreacommInput"
-                autoHeight
-                placeholder="Можно внести необязательный комментарий"
-              />
+              <div>
+                <TextArea
+                  id="TextAreacommInput"
+                  autoHeight
+                  placeholder="Можно внести необязательный комментарий"
+                />
+              </div>
             </div>
           </div>
 
-          <button>Send data!</button>
+          <button type="submit">Send data!</button>
         </form>
       </div>
     );
