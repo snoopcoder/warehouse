@@ -7,12 +7,6 @@ class ImageUpload extends React.Component {
     this.state = { file: "", imagePreviewUrl: "" };
   }
 
-  _handleSubmit(e) {
-    e.preventDefault();
-    // TODO: do something with -> this.state.file
-    console.log("handle uploading-", this.state.file);
-  }
-
   _handleImageChange(e) {
     e.preventDefault();
 
@@ -20,6 +14,7 @@ class ImageUpload extends React.Component {
     let file = e.target.files[0];
 
     reader.onloadend = () => {
+      this.props.onChange(e, { name: "file", value: file });
       this.setState({
         file: file,
         imagePreviewUrl: reader.result
@@ -59,7 +54,11 @@ class ImageUpload extends React.Component {
 
     return (
       <div className="ImageUpload">
-        <input type="file" onChange={e => this._handleImageChange(e)} />
+        <input
+          type="file"
+          accept="image/jpeg"
+          onChange={e => this._handleImageChange(e)}
+        />
         <div className="DivPreview">{$imagePreview}</div>
       </div>
     );
