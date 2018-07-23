@@ -9,11 +9,17 @@ import NewItemCard from "./NewItemCard.js";
 import ImageUpload from "./ImageUpload.js";
 import { Button } from "semantic-ui-react";
 import update from "immutability-helper";
+import { SSL_OP_CIPHER_SERVER_PREFERENCE } from "constants";
+
+function isNumber(obj) {
+  return !isNaN(parseFloat(obj));
+}
 
 class WarehouseMain extends Component {
   state = {
     ItemsArr: { rigs: [] },
-    DataOld: 0
+    DataOld: 0,
+    nameValid: true
   };
 
   //проверить коробка это или нет
@@ -25,6 +31,39 @@ class WarehouseMain extends Component {
   //3 раскладка для конкретнгого айтема
   //
 
+  IsNameBusy = name => {
+    let promis = new Promise(function(resolve, reject) {
+      fetch("http://127.0.0.1:3001/item/" + name)
+        .then(itemDataStream => itemDataStream.json())
+        .then(itemData => {
+          if (itemData.id == "") {
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        })
+        .catch(function(reason) {
+          console.log(reason);
+          reject(false);
+          // отказ
+        });
+    });
+    return promis;
+  };
+
+  checkName = async name => {
+    if (name.length < 3) {
+      //слишком короткое имя
+      this.setState({ nameValid: false });
+    } else if (isNumber(name)) {
+      //имя это число. так не пойдет
+      this.setState({ nameValid: false });
+    } else if (await this.IsNameBusy(name)) {
+      this.setState({ nameValid: false });
+    } else {
+      this.setState({ nameValid: true });
+    }
+  };
   nextItem = value => {
     this.setState({ name: value });
   };
@@ -115,7 +154,8 @@ class WarehouseMain extends Component {
       if (nextProps.match.params.id === prevState.prevId) {
         return {
           Items: Arr,
-          prevDo: _Do
+          prevDo: _Do,
+          nameValid: true
         };
       }
     }
@@ -154,7 +194,8 @@ class WarehouseMain extends Component {
       return {
         Items: null,
         prevId: nextProps.match.params.id,
-        prevDo: _Do
+        prevDo: _Do,
+        nameValid: true
       };
     }
     // No state update necessary
@@ -224,7 +265,11 @@ class WarehouseMain extends Component {
             Items={this.state.Items.breadcrumbs}
             Name={"Новый предмет"}
           />
-          <NewItemCard />
+          <NewItemCard
+            checkName={this.checkName}
+            nameValid={this.state.nameValid}
+            parentId={this.props.match.params.id}
+          />
         </div>
       );
     } else {

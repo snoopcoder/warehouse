@@ -2,6 +2,10 @@ var query = require("mysql-query-promise");
 var config = require("config");
 const tableName = config.item.tableName;
 
+function isNumber(obj) {
+  return !isNaN(parseFloat(obj));
+}
+
 const crud = {
   getBreadcrumbs: async id => {
     let Breadcrumbs = await query(
@@ -33,6 +37,8 @@ const crud = {
     return query(`SELECT * from NotBox`);
   },
   getItem: async id => {
+    //опредялем тип id
+
     /*заполнить обект  */
     let item = {
       id: "",
@@ -44,6 +50,19 @@ const crud = {
       imgUrl: "/noimg_m.jpg",
       content: ""
     };
+
+    if (!isNumber(id)) {
+      // id передан по имени. имя уникально поэтому значение только одно. иначе ошибка в переданом имени
+      let sqlid = await query(`SELECT id,name FROM ${tableName} WHERE name=?`, [
+        id
+      ]);
+      if (sqlid.length != 1) {
+        return item;
+      }
+      item.id = sqlid[0].id;
+      item.name = sqlid[0].name;
+      return item;
+    }
 
     let Info = await query(`SELECT * FROM ${tableName} WHERE id=?`, [
       Number(id)
@@ -91,7 +110,7 @@ const crud = {
     return products;
   },
   //create: async function({ id, name, price = 0, currency = "UAH" }) {
-  create: async function ({ fname }) {
+  create: async function({ fname }) {
     /*
     let product = {
       name: String(name),

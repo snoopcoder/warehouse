@@ -11,10 +11,10 @@ grid-gap: 2px;
 }
 
 
-#InputnameInput{
+#nameInput{
     width: 300px;
 }
-#TextAreacommInput{
+#TextAreaInput{
     width: 400px;
 }
 .image {
