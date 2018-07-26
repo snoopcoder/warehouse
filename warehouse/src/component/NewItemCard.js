@@ -66,6 +66,7 @@ class NewItemCard extends Component {
     data.append("nameInput", this.state.nameInput);
     data.append("countInput", this.state.countInput);
     data.append("TextAreaInput", this.state.TextAreaInput);
+    data.append("parentId", this.props.parentId);
     axios.post("http://127.0.0.1:3001/item", data);
     // fetch("http://127.0.0.1:3001/item", {
     //   method: "POST",
