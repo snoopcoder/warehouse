@@ -8,6 +8,7 @@ import {
 import React, { Component } from "react";
 import ImageUpload from "./ImageUpload.js";
 import { Button, Input, Dropdown, TextArea, Form } from "semantic-ui-react";
+import axios from "axios";
 import "./semantic.min.css";
 import "./NewItemCard.css";
 
@@ -15,6 +16,7 @@ class NewItemCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      file: "",
       nameInput: "",
       nameInputError: false,
       countInput: "1шт",
@@ -59,8 +61,12 @@ class NewItemCard extends Component {
     event.preventDefault();
     this.props.history.push("/box/" + this.props.parentId);
     // console.log(this.state.nameInput);
-    // const data = new FormData(event.target);
-
+    const data = new FormData();
+    data.append("myFile", this.state.file, "logo.jpg");
+    data.append("nameInput", this.state.nameInput);
+    data.append("countInput", this.state.countInput);
+    data.append("TextAreaInput", this.state.TextAreaInput);
+    axios.post("http://127.0.0.1:3001/item", data);
     // fetch("http://127.0.0.1:3001/item", {
     //   method: "POST",
     //   headers: {
@@ -69,15 +75,7 @@ class NewItemCard extends Component {
     //   body: data
     // });
   };
-  /*
-            
-          <label htmlFor="name">Название</label>
-          <input id="name" name="name" type="text" />
-          <label htmlFor="count">Количество</label>
-          <input id="count" name="count" type="text" />
 
-          <label htmlFor="comment">Коментарий</label>
-          <input id="comment" name="comment" type="text" /> */
   static getDerivedStateFromProps(nextProps, prevState) {
     //обработка отключения кнопки сохранить
     if (
@@ -97,7 +95,7 @@ class NewItemCard extends Component {
         <form onSubmit={this.handleSubmit}>
           <div className="NewItemCard">
             <div className="image">
-              <ImageUpload />
+              <ImageUpload onChange={this.handleUserInput} />
             </div>
             <div className="nameText name-count-comm-Text">Название</div>
             <div className="nameInput name-count-comm-Input">
