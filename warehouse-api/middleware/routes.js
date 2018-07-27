@@ -82,15 +82,21 @@ router
         fname = "";
       }
     }
-    const { nameInput, nameInput, countInput, parentId } = fields;
-    await item.create({
+    const { nameInput, countInput, TextAreaInput, parentId } = fields;
+    let id = await item.create({
       nameInput,
       countInput,
       TextAreaInput,
       parentId,
       fname
     });
-    ctx.status = 201;
+    if (id > 0) {
+      ctx.body = { id: id };
+      ctx.status = 200;
+    } else {
+      ctx.status = 409;
+    }
+
     //ctx.body = "dfdffd";
   })
   .put("/item/:id", async (ctx, next) => {

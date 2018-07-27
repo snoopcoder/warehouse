@@ -1,5 +1,6 @@
 var query = require("mysql-query-promise");
 var config = require("config");
+
 const tableName = config.item.tableName;
 
 function isNumber(obj) {
@@ -109,8 +110,43 @@ const crud = {
     );
     return products;
   },
-  //create: async function({ id, name, price = 0, currency = "UAH" }) {
-  create: async function({ fname }) {
+  //create
+  create: async function({
+    nameInput,
+    countInput,
+    TextAreaInput,
+    parentId,
+    fname
+  }) {
+    let id = await query("INSERT INTO  items (name,curr_count) VALUE (?,?)", [
+      nameInput,
+      countInput
+    ]);
+
+    if (id.affectedRows == 1) id = id.insertId;
+    let res = await query("INSERT INTO  relation (box,item) VALUE   (?,?)", [
+      parentId,
+      id
+    ]);
+    let errorLog = "";
+    let commentLog = "";
+    if (res.affectedRows == 1) {
+      //запишем в лог об успехе
+      errorLog = 0;
+      commentLog = `Создан новый предмет <${nameInput}>`;
+    } else {
+      //да плохо все в общем
+      errorLog = 1;
+      commentLog = `Ошибка создания новыго предмета <${nameInput}>`;
+    }
+    await query("INSERT INTO  log (type,box,item,comment) VALUE   (?,?,?,?)", [
+      errorLog,
+      parentId,
+      id,
+      commentLog
+    ]);
+    return id;
+
     /*
     let product = {
       name: String(name),

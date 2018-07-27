@@ -7,7 +7,17 @@ import {
 } from "react-router-dom";
 import React, { Component } from "react";
 import ImageUpload from "./ImageUpload.js";
-import { Button, Input, Dropdown, TextArea, Form } from "semantic-ui-react";
+import {
+  Button,
+  Input,
+  Dropdown,
+  TextArea,
+  Form,
+  Dimmer,
+  Loader,
+  Image,
+  Segment
+} from "semantic-ui-react";
 import axios from "axios";
 import "./semantic.min.css";
 import "./NewItemCard.css";
@@ -16,6 +26,7 @@ class NewItemCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      load: false,
       file: "",
       nameInput: "",
       nameInputError: false,
@@ -57,24 +68,34 @@ class NewItemCard extends Component {
     console.log(name, value);
   };
 
+  End = () => {
+    this.props.history.push("/box/" + this.props.match.params.id);
+  };
+
   handleSubmit = event => {
     event.preventDefault();
-    this.props.history.push("/box/" + this.props.parentId);
+    this.setState({ load: true });
+    let obj = {};
+
+    // this.props.history.push("/box/" + this.props.parentId);
+    // // console.log(this.state.nameInput);
+    // const data = new FormData();
+    // data.append("myFile", this.state.file, "logo.jpg");
+    // data.append("nameInput", this.state.nameInput);
+    // data.append("countInput", this.state.countInput);
+    // data.append("TextAreaInput", this.state.TextAreaInput);
+    // data.append("parentId", this.props.parentId);
+    // axios.post("http://127.0.0.1:3001/item", data);
+
+    //this.props.history.push("/box/" + this.props.parentId);
     // console.log(this.state.nameInput);
-    const data = new FormData();
-    data.append("myFile", this.state.file, "logo.jpg");
-    data.append("nameInput", this.state.nameInput);
-    data.append("countInput", this.state.countInput);
-    data.append("TextAreaInput", this.state.TextAreaInput);
-    data.append("parentId", this.props.parentId);
-    axios.post("http://127.0.0.1:3001/item", data);
-    // fetch("http://127.0.0.1:3001/item", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/x-www-form-urlencoded"
-    //   },
-    //   body: data
-    // });
+
+    obj.myFile = this.state.file;
+    obj.nameInput = this.state.nameInput;
+    obj.countInput = this.state.countInput;
+    obj.TextAreaInput = this.state.TextAreaInput;
+    obj.parentId = this.props.parentId;
+    this.props.handleSubmit(obj, this.End);
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -91,57 +112,73 @@ class NewItemCard extends Component {
     return null;
   }
   render() {
-    return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <div className="NewItemCard">
-            <div className="image">
-              <ImageUpload onChange={this.handleUserInput} />
-            </div>
-            <div className="nameText name-count-comm-Text">Название</div>
-            <div className="nameInput name-count-comm-Input">
-              <Input
-                id="nameInput"
-                name="nameInput"
-                error={!this.props.nameValid}
-                placeholder="Короткое описание"
+    let MyForm = (
+      <form onSubmit={this.handleSubmit}>
+        <div className="NewItemCard">
+          <div className="image">
+            <ImageUpload onChange={this.handleUserInput} />
+          </div>
+          <div className="nameText name-count-comm-Text">Название</div>
+          <div className="nameInput name-count-comm-Input">
+            <Input
+              id="nameInput"
+              name="nameInput"
+              error={!this.props.nameValid}
+              placeholder="Короткое описание"
+              onChange={this.handleUserInput}
+              value={this.state.nameInput}
+            />
+          </div>
+          <div className="countText name-count-comm-Text">Количество</div>
+          <div className="countInput name-count-comm-Input">
+            <Dropdown
+              name="countInput"
+              placeholder="Количество"
+              selection
+              defaultValue="one"
+              options={this.state.stateOptions}
+              onChange={this.handleUserInput}
+            />
+          </div>
+          <div className="commText name-count-comm-Text">Комментарий</div>
+          <div className="commInput name-count-comm-Input">
+            <div>
+              <TextArea
+                name="TextAreaInput"
+                id="TextAreaInput"
+                autoHeight
+                placeholder="Можно внести необязательный комментарий"
                 onChange={this.handleUserInput}
               />
-            </div>
-            <div className="countText name-count-comm-Text">Количество</div>
-            <div className="countInput name-count-comm-Input">
-              <Dropdown
-                name="countInput"
-                placeholder="Количество"
-                selection
-                defaultValue="one"
-                options={this.state.stateOptions}
-                onChange={this.handleUserInput}
-              />
-            </div>
-            <div className="commText name-count-comm-Text">Комментарий</div>
-            <div className="commInput name-count-comm-Input">
-              <div>
-                <TextArea
-                  name="TextAreaInput"
-                  id="TextAreaInput"
-                  autoHeight
-                  placeholder="Можно внести необязательный комментарий"
-                  onChange={this.handleUserInput}
-                />
-              </div>
             </div>
           </div>
+        </div>
 
-          <Button disabled={!this.state.formValid} type="submit" value="Submit">
-            Сохранить
-          </Button>
-          <Link to={"/box/" + this.props.parentId}>
-            <Button>Отмена</Button>
-          </Link>
-        </form>
-      </div>
+        <Button disabled={!this.state.formValid} type="submit" value="Submit">
+          Сохранить
+        </Button>
+        <Link to={"/box/" + this.props.parentId}>
+          <Button>Отмена</Button>
+        </Link>
+      </form>
     );
+    let main = null;
+    if (this.state.load) {
+      main = (
+        <Segment>
+          <Dimmer active inverted>
+            <Loader active inverted>
+              Loading
+            </Loader>
+          </Dimmer>
+          {MyForm}
+        </Segment>
+      );
+    } else {
+      main = MyForm;
+    }
+
+    return <div> {main}</div>;
   }
 }
 

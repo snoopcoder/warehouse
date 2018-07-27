@@ -9,6 +9,7 @@ import NewItemCard from "./NewItemCard.js";
 import ImageUpload from "./ImageUpload.js";
 import { Button } from "semantic-ui-react";
 import update from "immutability-helper";
+import axios from "axios";
 import { SSL_OP_CIPHER_SERVER_PREFERENCE } from "constants";
 
 function isNumber(obj) {
@@ -30,6 +31,26 @@ class WarehouseMain extends Component {
   //2 раскладка для коробки
   //3 раскладка для конкретнгого айтема
   //
+
+  handleSubmit = async (obj, callbackOnLoad) => {
+    // console.log(this.state.nameInput);
+    const data = new FormData();
+    data.append("myFile", obj.file, "logo.jpg");
+    data.append("nameInput", obj.nameInput);
+    data.append("countInput", obj.countInput);
+    data.append("TextAreaInput", obj.TextAreaInput);
+    data.append("parentId", obj.parentId);
+    await axios.post("http://127.0.0.1:3001/item", data);
+    callbackOnLoad();
+    // this.props.history.push("/box/" + this.props.match.params.id);
+    // fetch("http://127.0.0.1:3001/item", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/x-www-form-urlencoded"
+    //   },
+    //   body: data
+    // });
+  };
 
   IsNameBusy = name => {
     let promis = new Promise(function(resolve, reject) {
@@ -179,7 +200,9 @@ class WarehouseMain extends Component {
       //Ниже есть обработка смены id если она произошла то пойдем к ней
       if (nextProps.match.params.id === prevState.prevId) {
         return {
-          prevDo: _Do
+          prevDo: _Do,
+          //запросим новые данные
+          Items: null
         };
       }
     }
@@ -267,6 +290,7 @@ class WarehouseMain extends Component {
           />
           <NewItemCard
             checkName={this.checkName}
+            handleSubmit={this.handleSubmit}
             nameValid={this.state.nameValid}
             parentId={this.props.match.params.id}
           />
