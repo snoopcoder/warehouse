@@ -118,10 +118,10 @@ const crud = {
     parentId,
     fname
   }) {
-    let id = await query("INSERT INTO  items (name,curr_count) VALUE (?,?)", [
-      nameInput,
-      countInput
-    ]);
+    let id = await query(
+      "INSERT INTO  items (name,curr_count,logo) VALUE (?,?,?)",
+      [nameInput, countInput, fname]
+    );
 
     if (id.affectedRows == 1) id = id.insertId;
     let res = await query("INSERT INTO  relation (box,item) VALUE   (?,?)", [

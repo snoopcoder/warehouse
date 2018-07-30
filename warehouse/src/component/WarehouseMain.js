@@ -35,7 +35,7 @@ class WarehouseMain extends Component {
   handleSubmit = async (obj, callbackOnLoad) => {
     // console.log(this.state.nameInput);
     const data = new FormData();
-    data.append("myFile", obj.file, "logo.jpg");
+    data.append("myFile", obj.myFile, "logo.jpg");
     data.append("nameInput", obj.nameInput);
     data.append("countInput", obj.countInput);
     data.append("TextAreaInput", obj.TextAreaInput);

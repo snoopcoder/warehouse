@@ -76,6 +76,10 @@ router
       files[0].destroy();
       if (files[0].mimeType == "image/jpeg") {
         fname = await MoveFile(ftempfullpath, fname);
+
+        // await sharp(fname)
+        //   .resize(71, 71)
+        //   .toFile("logo_" + fname);
       } else {
         await DeleteFile(ftempfullpath);
         warnings = "wrong file type";
