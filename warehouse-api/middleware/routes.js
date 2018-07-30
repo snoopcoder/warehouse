@@ -4,6 +4,7 @@ var multer = require("koa-multer");
 const asyncBusboy = require("async-busboy");
 const fs = require("fs");
 var uuid = require("node-uuid");
+var Jimp = require("jimp");
 
 var config = require("config");
 const FileDir = config.files.dir;
@@ -77,6 +78,15 @@ router
       if (files[0].mimeType == "image/jpeg") {
         fname = await MoveFile(ftempfullpath, fname);
 
+        await Jimp.read(FileDir + fname)
+          .then(logo => {
+            return logo
+              .scaleToFit(71, 71) // resize
+              .write(FileDir + "logo_" + fname); // save
+          })
+          .catch(err => {
+            console.error(err);
+          });
         // await sharp(fname)
         //   .resize(71, 71)
         //   .toFile("logo_" + fname);
