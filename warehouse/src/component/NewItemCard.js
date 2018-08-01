@@ -72,7 +72,7 @@ class NewItemCard extends Component {
   };
 
   handleSubmit = event => {
-    event.preventDefault();
+    //event.preventDefault();
     this.setState({ load: true });
     let obj = {};
 
@@ -94,7 +94,32 @@ class NewItemCard extends Component {
     obj.countInput = this.state.countInput;
     obj.TextAreaInput = this.state.TextAreaInput;
     obj.parentId = this.props.parentId;
-    this.props.handleSubmit(obj);
+    // this.props.handleSubmit(obj);
+
+    //-*******
+    const data = new FormData();
+    data.append("myFile", obj.myFile, "logo.jpg");
+    data.append("nameInput", obj.nameInput);
+    data.append("countInput", obj.countInput);
+    data.append("TextAreaInput", obj.TextAreaInput);
+    data.append("parentId", obj.parentId);
+
+    fetch("http://127.0.0.1:3001/item", {
+      method: "POST",
+      body: data
+    })
+      .then(
+        response => response.json() // if the response is a JSON object
+      )
+      .then(
+        success => console.log(success) // Handle the success response object
+      )
+      .catch(
+        error => console.log(error) // Handle the error response object
+      );
+    console.log("dfdfdfdf");
+
+    //****** */
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -160,7 +185,7 @@ class NewItemCard extends Component {
         >
           Сохранить
         </Button>
-        <Link to={"/box/" + this.props.parentId}>
+        <Link to={"/box/" + this.props.parentId + "/show"}>
           <Button>Отмена</Button>
         </Link>
       </form>

@@ -39,7 +39,7 @@ class WarehouseMain extends Component {
   //
 
   handleSubmit = async obj => {
-    // console.log(this.state.nameInput);
+    ///console.log(this.state.nameInput);
     this.props.history.push("/box/" + this.props.match.params.id + "/show");
     const data = new FormData();
     data.append("myFile", obj.myFile, "logo.jpg");
@@ -54,7 +54,6 @@ class WarehouseMain extends Component {
     // }
 
     fetch("http://127.0.0.1:3001/item", {
-      mode: "no-cors",
       method: "POST",
       body: data
     }).then(
@@ -70,7 +69,7 @@ class WarehouseMain extends Component {
       }
     );
 
-    console.log("dfdfdf");
+    //console.log("dfdfdf");
     //callbackOnLoad();
     //this.props.history.push("/box/" + this.props.match.params.id + "/show");
     // fetch("http://127.0.0.1:3001/item", {

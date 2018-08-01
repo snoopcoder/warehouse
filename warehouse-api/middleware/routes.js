@@ -106,7 +106,10 @@ router
         fname = "";
       }
     }
-    const { nameInput, countInput, TextAreaInput, parentId } = fields;
+    let { nameInput, countInput, TextAreaInput, parentId } = fields;
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    TextAreaInput = "";
+    //
     let id = await item.create({
       nameInput,
       countInput,
