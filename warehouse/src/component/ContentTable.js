@@ -28,11 +28,20 @@ class contentTable extends Component {
                   </label>
                 </td>
                 <td>
-                  <img src="/noimg_m.jpg" />
+                  <img
+                    alt=""
+                    src={
+                      item.item_img && item.item_img != ""
+                        ? "/logo_" + item.item_img
+                        : "/noimg_m.jpg"
+                    }
+                  />
                 </td>
                 <td>
                   <span>
-                    <Link to={"/box/" + item.item_id}>{item.name}</Link>{" "}
+                    <Link to={"/box/" + item.item_id + "/show"}>
+                      {item.name}
+                    </Link>
                   </span>
                 </td>
                 <td>{item.item_count}</td>

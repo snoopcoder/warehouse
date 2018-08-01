@@ -48,7 +48,7 @@ class NewItemCard extends Component {
       let value = obje.value;
       if (name == "countInput") {
         for (let item of this.state.stateOptions) {
-          if (item.value == value) value = item.text;
+          if (item.value === value) value = item.text;
         }
       }
       this.setState({ [name]: value }, () => {
@@ -65,11 +65,10 @@ class NewItemCard extends Component {
       default: {
       }
     }
-    console.log(name, value);
   };
 
   End = () => {
-    this.props.history.push("/box/" + this.props.match.params.id);
+    this.history.push("/box/" + this.props.match.params.id + "/show");
   };
 
   handleSubmit = event => {
@@ -95,7 +94,7 @@ class NewItemCard extends Component {
     obj.countInput = this.state.countInput;
     obj.TextAreaInput = this.state.TextAreaInput;
     obj.parentId = this.props.parentId;
-    this.props.handleSubmit(obj, this.End);
+    this.props.handleSubmit(obj);
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -113,7 +112,7 @@ class NewItemCard extends Component {
   }
   render() {
     let MyForm = (
-      <form onSubmit={this.handleSubmit}>
+      <form>
         <div className="NewItemCard">
           <div className="image">
             <ImageUpload onChange={this.handleUserInput} />
@@ -154,7 +153,11 @@ class NewItemCard extends Component {
           </div>
         </div>
 
-        <Button disabled={!this.state.formValid} type="submit" value="Submit">
+        <Button
+          disabled={!this.state.formValid}
+          onClick={this.handleSubmit}
+          value="Submit"
+        >
           Сохранить
         </Button>
         <Link to={"/box/" + this.props.parentId}>
@@ -181,5 +184,5 @@ class NewItemCard extends Component {
     return <div> {main}</div>;
   }
 }
-
-export default withRouter(NewItemCard);
+export default NewItemCard;
+//export default withRouter(NewItemCard);

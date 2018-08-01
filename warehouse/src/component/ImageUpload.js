@@ -39,7 +39,9 @@ class ImageUpload extends React.Component {
     let { imagePreviewUrl } = this.state;
     let $imagePreview = null;
     if (imagePreviewUrl) {
-      $imagePreview = <img className="previewImgIcon" src={imagePreviewUrl} />;
+      $imagePreview = (
+        <img className="previewImgIcon" src={imagePreviewUrl} alt="" />
+      );
     } else {
       $imagePreview = "Drag or click";
     }

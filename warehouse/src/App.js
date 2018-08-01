@@ -123,18 +123,24 @@ const Main = () => (
   <main>
     <Switch>
       <Route exact path="/" component={Home} />
-      <Route exact path="/box/:id" component={WarehouseMain} />
-      <Route path="/box/:id/:do" component={WarehouseMain} />
+      <Route path="/box/:id/:do?" component={WarehouseMain} />
     </Switch>
   </main>
 );
+{
+  /* <Switch>
+<Route exact path="/" component={Home} />
+<Route exact path="/box/:id" component={WarehouseMain} />
+<Route path="/box/:id/:do" component={WarehouseMain} />
+</Switch> */
+}
 
 // The Header creates links that can be used to navigate
 // between routes.
-const Header = () => (
-  <header>
-    <nav>
-      <Link to="/box/0">root</Link>
-    </nav>
-  </header>
-);
+// const Header = () => (
+//   <header>
+//     <nav>
+//       <Link to="/box/0">root</Link>
+//     </nav>
+//   </header>
+// );

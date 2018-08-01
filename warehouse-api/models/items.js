@@ -90,7 +90,7 @@ const crud = {
     Breadcrumbs = Breadcrumbs.reverse();
 
     let content = await query(
-      `SELECT relation.id as rel_id, items.id as item_id, relation.date as date, items.name as name,items.curr_count as item_count  FROM relation join items on  relation.item = items.id  WHERE box=?`,
+      `SELECT relation.id as rel_id, items.id as item_id, relation.date as date, items.name as name,items.curr_count as item_count,items.logo as item_img   FROM relation join items on  relation.item = items.id  WHERE box=?`,
       [Number(id)]
     );
     item.id = Info[0].id;
@@ -105,7 +105,7 @@ const crud = {
   },
   getContent: async id => {
     let products = await query(
-      `SELECT relation.id as rel_id, items.id as item_id, relation.date as date, items.name as name,items.curr_count as item_count  FROM relation join items on  relation.item = items.id  WHERE box=?`,
+      `SELECT relation.id as rel_id, items.id as item_id, relation.date as date, items.name as name,items.curr_count as item_count,items.logo as item_img    FROM relation join items on  relation.item = items.id  WHERE box=?`,
       [Number(id)]
     );
     return products;

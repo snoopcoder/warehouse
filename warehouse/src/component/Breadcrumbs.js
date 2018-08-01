@@ -16,13 +16,13 @@ class Breadcrumbs extends Component {
       main = (
         <ul className="hr">
           <li key={shortid.generate()}>
-            <Link to="/box/0">
+            <Link to="/box/0/show">
               {String.fromCharCode(62) + String.fromCharCode(62)}
             </Link>
           </li>
           {this.props.Items.map((item, i) => (
             <li key={shortid.generate()}>
-              <Link to={"/box/" + item.BOX}>{item.name}</Link>
+              <Link to={"/box/" + item.BOX + "/show"}>{item.name}</Link>
             </li>
           ))}
           <li key={shortid.generate()}>{this.props.Name}</li>

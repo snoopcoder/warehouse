@@ -36,7 +36,7 @@ class ParentList extends Component {
                 </td>
                 <td>
                   <span>
-                    <Link to={"/box/" + item.id}>{item.name}</Link>{" "}
+                    <Link to={"/box/" + item.id + "/show"}>{item.name}</Link>
                   </span>
                 </td>
                 <td />

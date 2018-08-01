@@ -12,9 +12,9 @@ const FileDir = config.files.dir;
 function MoveFile(path, name) {
   let promise = new Promise((resolve, reject) => {
     let filename = uuid.v4() + ".jpg";
-    fs.rename(path, FileDir + filename, err => {
+    fs.copyFile(path, FileDir + filename, err => {
       if (err) reject(err);
-      console.log("Rename complete!", FileDir + filename);
+      console.log("Copy complete!", FileDir + filename);
       resolve(filename);
     });
   });
@@ -76,8 +76,21 @@ router
       let ftempfullpath = files[0].path;
       files[0].destroy();
       if (files[0].mimeType == "image/jpeg") {
-        fname = await MoveFile(ftempfullpath, fname);
+        // //не будем ждать чтобы калач долго не крутился
+        // MoveFile(ftempfullpath, fname)
+        //   .then(fname => {
+        //     return Jimp.read(FileDir + fname);
+        //   })
+        //   .then(logo => {
+        //     return logo
+        //       .scaleToFit(71, 71) // resize
+        //       .write(FileDir + "logo_" + fname); // save
+        //   })
+        //   .catch(err => {
+        //     console.error(err);
+        //   });
 
+        fname = await MoveFile(ftempfullpath, fname);
         await Jimp.read(FileDir + fname)
           .then(logo => {
             return logo
@@ -87,9 +100,6 @@ router
           .catch(err => {
             console.error(err);
           });
-        // await sharp(fname)
-        //   .resize(71, 71)
-        //   .toFile("logo_" + fname);
       } else {
         await DeleteFile(ftempfullpath);
         warnings = "wrong file type";

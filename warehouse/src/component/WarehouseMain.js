@@ -1,4 +1,10 @@
-import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+  Link,
+  withRouter
+} from "react-router-dom";
 import React, { Component } from "react";
 //https://habr.com/company/devexpress/blog/283314/
 import ContentTable from "./ContentTable.js";
@@ -32,17 +38,41 @@ class WarehouseMain extends Component {
   //3 раскладка для конкретнгого айтема
   //
 
-  handleSubmit = async (obj, callbackOnLoad) => {
+  handleSubmit = async obj => {
     // console.log(this.state.nameInput);
+    this.props.history.push("/box/" + this.props.match.params.id + "/show");
     const data = new FormData();
     data.append("myFile", obj.myFile, "logo.jpg");
     data.append("nameInput", obj.nameInput);
     data.append("countInput", obj.countInput);
     data.append("TextAreaInput", obj.TextAreaInput);
     data.append("parentId", obj.parentId);
-    await axios.post("http://127.0.0.1:3001/item", data);
-    callbackOnLoad();
-    // this.props.history.push("/box/" + this.props.match.params.id);
+    // try {
+    //   let df = await axios.post("http://127.0.0.1:3001/item", data);
+    // } catch (e) {
+    //   console.log(e);
+    // }
+
+    fetch("http://127.0.0.1:3001/item", {
+      mode: "no-cors",
+      method: "POST",
+      body: data
+    }).then(
+      function(res) {
+        if (res.ok) {
+          console.log("Perfect! ");
+        } else if (res.status == 401) {
+          console.log("Oops! ");
+        }
+      },
+      function(e) {
+        console.log("Error submitting form!");
+      }
+    );
+
+    console.log("dfdfdf");
+    //callbackOnLoad();
+    //this.props.history.push("/box/" + this.props.match.params.id + "/show");
     // fetch("http://127.0.0.1:3001/item", {
     //   method: "POST",
     //   headers: {
@@ -141,12 +171,20 @@ class WarehouseMain extends Component {
     }
      */
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    console.log("getDerivedStateFromProps");
+  componentWillUnmount() {
+    console.log("unmounting");
+  }
 
-    let _Do = prevState.prevDo;
-    if (!prevState.hasOwnProperty("prevDo")) {
-      _Do = "show";
+  static getDerivedStateFromProps(nextProps, prevState) {
+    console.log(
+      "getDerivedStateFromProps,",
+      nextProps.history.action,
+      nextProps.history.location.pathname
+    );
+
+    let _Do = "show";
+    if (prevState.hasOwnProperty("prevDo")) {
+      _Do = prevState.prevDo;
     }
 
     //определить что сейчас происходит переход и нужень контроль breadscrambs
@@ -156,7 +194,7 @@ class WarehouseMain extends Component {
       prevState.prevDo === "show" &&
       nextProps.match.params.do === "new"
     ) {
-      // происходит смена режима работы с show на add
+      // происходит смена режима работы с show на new
       _Do = "new";
       // Нужна корректировка breadscrambs если ее еще не было
       let Arr = prevState.Items;
@@ -183,7 +221,7 @@ class WarehouseMain extends Component {
     if (
       prevState.hasOwnProperty("prevDo") &&
       prevState.prevDo === "new" &&
-      nextProps.match.params.hasOwnProperty("do") === false
+      nextProps.match.params.do === "show"
     ) {
       // происходит смена режима работы с new на show
       // Нужна корректировка breadscrambs если ее еще не было
@@ -200,9 +238,9 @@ class WarehouseMain extends Component {
       //Ниже есть обработка смены id если она произошла то пойдем к ней
       if (nextProps.match.params.id === prevState.prevId) {
         return {
-          prevDo: _Do,
+          prevDo: _Do
           //запросим новые данные
-          Items: null
+          // Items: null
         };
       }
     }
@@ -255,7 +293,7 @@ class WarehouseMain extends Component {
   render() {
     let main = null;
     //условный рендеринг
-    if (this.state.Items === null) {
+    if (!this.state.Items) {
       //не загружены данные отображаем калач
       main = <div>loading</div>;
     } else if (this.props.match.params.id == 0) {
@@ -279,7 +317,7 @@ class WarehouseMain extends Component {
       );
     } else if (
       !(this.props.match.params.do === undefined) &&
-      this.props.match.params.do == "new"
+      this.props.match.params.do === "new"
     ) {
       //Новый предмет
       main = (
@@ -369,4 +407,4 @@ class WarehouseMain extends Component {
   }
 }
 
-export default WarehouseMain;
+export default withRouter(WarehouseMain);
