@@ -16,9 +16,12 @@
     "shortid": "^2.2.12"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env DEBUG='express:*' PORT=3002 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
   }
 }

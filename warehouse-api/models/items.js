@@ -95,11 +95,18 @@ const crud = {
     );
     item.id = Info[0].id;
     item.name = Info[0].name;
-    item.count = Info[0].name.curr_count;
+    item.count = Info[0].curr_count;
+    item.date = Info[0].date;
+    item.comment = Info[0].comment;
+    if (Info[0].logo !== "") item.item_img = Info[0].logo;
     item.breadcrumbs = Breadcrumbs;
     if (content.length > 0) item.type = "box";
     else item.type = "item";
     item.content = content;
+    /*
+      item.count = qlid[0].curr_count;
+      item.date = qlid[0].date;
+      item.item_img = qlid[0].logo; */
 
     return item;
   },
@@ -119,8 +126,8 @@ const crud = {
     fname
   }) {
     let id = await query(
-      "INSERT INTO  items (name,curr_count,logo) VALUE (?,?,?)",
-      [nameInput, countInput, fname]
+      "INSERT INTO  items (name,curr_count,comment,logo) VALUE (?,?,?,?)",
+      [nameInput, countInput, TextAreaInput, fname]
     );
 
     if (id.affectedRows == 1) id = id.insertId;

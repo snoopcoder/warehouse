@@ -108,7 +108,7 @@ router
     }
     let { nameInput, countInput, TextAreaInput, parentId } = fields;
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    TextAreaInput = "";
+    //TextAreaInput = "";
     //
     let id = await item.create({
       nameInput,
