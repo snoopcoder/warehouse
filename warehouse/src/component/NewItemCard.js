@@ -73,53 +73,15 @@ class NewItemCard extends Component {
   };
 
   handleSubmit = event => {
-    //event.preventDefault();
+    event.preventDefault();
     this.setState({ load: true });
     let obj = {};
-
-    // this.props.history.push("/box/" + this.props.parentId);
-    // // console.log(this.state.nameInput);
-    // const data = new FormData();
-    // data.append("myFile", this.state.file, "logo.jpg");
-    // data.append("nameInput", this.state.nameInput);
-    // data.append("countInput", this.state.countInput);
-    // data.append("TextAreaInput", this.state.TextAreaInput);
-    // data.append("parentId", this.props.parentId);
-    // axios.post("http://127.0.0.1:3001/item", data);
-
-    //this.props.history.push("/box/" + this.props.parentId);
-    // console.log(this.state.nameInput);
-
     obj.myFile = this.state.file;
     obj.nameInput = this.state.nameInput;
     obj.countInput = this.state.countInput;
     obj.TextAreaInput = this.state.TextAreaInput;
     obj.parentId = this.props.parentId;
     this.props.handleSubmit(obj);
-
-    //-*******
-    // const data = new FormData();
-    // data.append("myFile", obj.myFile, "logo.jpg");
-    // data.append("nameInput", obj.nameInput);
-    // data.append("countInput", obj.countInput);
-    // data.append("TextAreaInput", obj.TextAreaInput);
-    // data.append("parentId", obj.parentId);
-
-    // fetch("http://127.0.0.1:3001/item", {
-    //   method: "POST",
-    //   body: data
-    // })
-    //   .then(
-    //     response => response.json() // if the response is a JSON object
-    //   )
-    //   .then(
-    //     success => console.log(success) // Handle the success response object
-    //   )
-    //   .catch(
-    //     error => console.log(error) // Handle the error response object
-    //   );
-
-    //****** */
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {

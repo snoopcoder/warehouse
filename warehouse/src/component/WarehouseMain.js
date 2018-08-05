@@ -26,8 +26,12 @@ class WarehouseMain extends Component {
   state = {
     ItemsArr: { rigs: [] },
     DataOld: 0,
-    nameValid: true,
-    item: {
+    nameValid: true
+  };
+
+  /*
+  
+      items: {
       id: "",
       type: "",
       name: "",
@@ -37,8 +41,7 @@ class WarehouseMain extends Component {
       imgUrl: "/noimg_m.jpg",
       content: ""
     }
-  };
-
+  */
   //проверить коробка это или нет
   // вывести содержимое если это коробка
 
@@ -49,7 +52,7 @@ class WarehouseMain extends Component {
   //
 
   /* Рефакторинг
-1 перенос раздачу картинок на сторону коа
+1 +перенос раздачу картинок на сторону коа
 2 переписать getDerivedStateFromProps  
 3 создать модель данных
 4 переделать создание и изменение
@@ -59,7 +62,7 @@ class WarehouseMain extends Component {
     ///console.log(this.state.nameInput);
 
     const data = new FormData();
-    data.append("myFile", obj.myFile, "logo.jpg");
+    if (obj.myFile !== "") data.append("myFile", obj.myFile, "logo.jpg");
     data.append("nameInput", obj.nameInput);
     data.append("countInput", obj.countInput);
     data.append("TextAreaInput", obj.TextAreaInput);
@@ -132,8 +135,7 @@ class WarehouseMain extends Component {
       _Do = prevState.prevDo;
     }
 
-    //определить что сейчас происходит переход и нужень контроль breadscrambs
-    //скоректировать bredscrambs если нужно
+    //определить что сейчас происходит
     if (
       prevState.hasOwnProperty("prevDo") &&
       prevState.prevDo === "show" &&
@@ -141,27 +143,14 @@ class WarehouseMain extends Component {
     ) {
       // происходит смена режима работы с show на new
       _Do = "new";
-      // Нужна корректировка breadscrambs если ее еще не было
-      let Arr = prevState.Items;
-      if (
-        prevState.Items.breadcrumbs.length === 0 ||
-        prevState.Items.breadcrumbs[prevState.Items.breadcrumbs.length - 1]
-          .id !== nextProps.match.params.id
-      ) {
-        Arr.breadcrumbs.push({
-          BOX: nextProps.match.params.id,
-          name: Arr.name
-        });
-      }
-
-      //Ниже есть обработка смены id если она произошла то пойдем к ней
-      if (nextProps.match.params.id === prevState.prevId) {
-        return {
-          Items: Arr,
-          prevDo: _Do,
-          nameValid: true
-        };
-      }
+      return {
+        //Items: Arr,
+        prevDo: _Do,
+        //чтобы первоначальная закраска инпута не была красной
+        nameValid: true,
+        //запросим новые данные
+        Items: null
+      };
     }
     if (
       prevState.hasOwnProperty("prevDo") &&
@@ -169,25 +158,12 @@ class WarehouseMain extends Component {
       nextProps.match.params.do === "show"
     ) {
       // происходит смена режима работы с new на show
-      // Нужна корректировка breadscrambs если ее еще не было
-
-      let Arr = prevState.Items;
-      if (
-        prevState.Items.breadcrumbs.length !== 0 ||
-        prevState.Items.breadcrumbs[prevState.Items.breadcrumbs.length - 1]
-          .id === nextProps.match.params.id
-      ) {
-        Arr.breadcrumbs.pop();
-      }
       _Do = "show";
-      //Ниже есть обработка смены id если она произошла то пойдем к ней
-      if (nextProps.match.params.id === prevState.prevId) {
-        return {
-          prevDo: _Do,
-          //запросим новые данные
-          Items: null
-        };
-      }
+      return {
+        prevDo: _Do,
+        //запросим новые данные
+        Items: null
+      };
     }
 
     // Store prevId in state so we can compare when props change.
@@ -234,17 +210,6 @@ class WarehouseMain extends Component {
           <ParentList Items={this.state.Items} />
         </div>
       );
-    } else if (this.state.Items.content.length == 0) {
-      //карточка предмета
-      main = (
-        <div>
-          <Breadcrumbs
-            Items={this.state.Items.breadcrumbs}
-            Name={this.state.Items.name}
-          />
-          <ItemCard Items={this.state.Items.content} />
-        </div>
-      );
     } else if (
       !(this.props.match.params.do === undefined) &&
       this.props.match.params.do === "new"
@@ -262,6 +227,17 @@ class WarehouseMain extends Component {
             nameValid={this.state.nameValid}
             parentId={this.props.match.params.id}
           />
+        </div>
+      );
+    } else if (this.state.Items.content.length == 0) {
+      //карточка предмета
+      main = (
+        <div>
+          <Breadcrumbs
+            Items={this.state.Items.breadcrumbs}
+            Name={this.state.Items.name}
+          />
+          <ItemCard Items={this.state.Items} />
         </div>
       );
     } else {
@@ -304,6 +280,22 @@ class WarehouseMain extends Component {
       });
   }
   _FillModel(itemData) {
+    if (this.state.prevDo === "new") {
+      let item = {
+        id: "undefined",
+        type: "",
+        name: "Новый предмет",
+        date: "",
+        count: "",
+        breadcrumbs: "",
+        imgUrl: "/noimg_m.jpg",
+        content: ""
+      }; //{BOX: 10, name: "коробка 1"}
+      let breadcrumbs = itemData.breadcrumbs;
+      breadcrumbs.push({ BOX: itemData.id, name: itemData.name });
+      item.breadcrumbs = breadcrumbs;
+      itemData = item;
+    }
     this.setState({
       Items: itemData
     });
