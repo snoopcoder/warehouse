@@ -32,7 +32,7 @@ class contentTable extends Component {
                     alt=""
                     src={
                       item.item_img && item.item_img != ""
-                        ? "/logo_" + item.item_img
+                        ? "http://127.0.0.1:3001/public/logo_" + item.item_img
                         : "/noimg_m.jpg"
                     }
                   />

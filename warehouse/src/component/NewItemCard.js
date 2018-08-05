@@ -61,6 +61,7 @@ class NewItemCard extends Component {
     switch (name) {
       case "nameInput": {
         this.props.checkName(value);
+        break;
       }
       default: {
       }
@@ -94,30 +95,29 @@ class NewItemCard extends Component {
     obj.countInput = this.state.countInput;
     obj.TextAreaInput = this.state.TextAreaInput;
     obj.parentId = this.props.parentId;
-    // this.props.handleSubmit(obj);
+    this.props.handleSubmit(obj);
 
     //-*******
-    const data = new FormData();
-    data.append("myFile", obj.myFile, "logo.jpg");
-    data.append("nameInput", obj.nameInput);
-    data.append("countInput", obj.countInput);
-    data.append("TextAreaInput", obj.TextAreaInput);
-    data.append("parentId", obj.parentId);
+    // const data = new FormData();
+    // data.append("myFile", obj.myFile, "logo.jpg");
+    // data.append("nameInput", obj.nameInput);
+    // data.append("countInput", obj.countInput);
+    // data.append("TextAreaInput", obj.TextAreaInput);
+    // data.append("parentId", obj.parentId);
 
-    fetch("http://127.0.0.1:3001/item", {
-      method: "POST",
-      body: data
-    })
-      .then(
-        response => response.json() // if the response is a JSON object
-      )
-      .then(
-        success => console.log(success) // Handle the success response object
-      )
-      .catch(
-        error => console.log(error) // Handle the error response object
-      );
-    console.log("dfdfdfdf");
+    // fetch("http://127.0.0.1:3001/item", {
+    //   method: "POST",
+    //   body: data
+    // })
+    //   .then(
+    //     response => response.json() // if the response is a JSON object
+    //   )
+    //   .then(
+    //     success => console.log(success) // Handle the success response object
+    //   )
+    //   .catch(
+    //     error => console.log(error) // Handle the error response object
+    //   );
 
     //****** */
   };
@@ -125,7 +125,7 @@ class NewItemCard extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     //обработка отключения кнопки сохранить
     if (
-      nextProps.nameValid != prevState.formValid &&
+      nextProps.nameValid !== prevState.formValid &&
       prevState.nameInput.length > 0
     ) {
       return {

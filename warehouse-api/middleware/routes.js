@@ -7,7 +7,7 @@ var uuid = require("node-uuid");
 var Jimp = require("jimp");
 
 var config = require("config");
-const FileDir = config.files.dir;
+const FileDir = ".\\public\\";
 
 function MoveFile(path, name) {
   let promise = new Promise((resolve, reject) => {

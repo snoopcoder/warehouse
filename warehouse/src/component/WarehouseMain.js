@@ -26,7 +26,17 @@ class WarehouseMain extends Component {
   state = {
     ItemsArr: { rigs: [] },
     DataOld: 0,
-    nameValid: true
+    nameValid: true,
+    item: {
+      id: "",
+      type: "",
+      name: "",
+      date: "",
+      count: "",
+      breadcrumbs: "",
+      imgUrl: "/noimg_m.jpg",
+      content: ""
+    }
   };
 
   //проверить коробка это или нет
@@ -38,47 +48,38 @@ class WarehouseMain extends Component {
   //3 раскладка для конкретнгого айтема
   //
 
+  /* Рефакторинг
+1 перенос раздачу картинок на сторону коа
+2 переписать getDerivedStateFromProps  
+3 создать модель данных
+4 переделать создание и изменение
+5 переделать корректировку крошек*/
+
   handleSubmit = async obj => {
     ///console.log(this.state.nameInput);
-    this.props.history.push("/box/" + this.props.match.params.id + "/show");
+
     const data = new FormData();
     data.append("myFile", obj.myFile, "logo.jpg");
     data.append("nameInput", obj.nameInput);
     data.append("countInput", obj.countInput);
     data.append("TextAreaInput", obj.TextAreaInput);
     data.append("parentId", obj.parentId);
-    // try {
-    //   let df = await axios.post("http://127.0.0.1:3001/item", data);
-    // } catch (e) {
-    //   console.log(e);
-    // }
 
     fetch("http://127.0.0.1:3001/item", {
       method: "POST",
       body: data
-    }).then(
-      function(res) {
-        if (res.ok) {
-          console.log("Perfect! ");
-        } else if (res.status == 401) {
-          console.log("Oops! ");
-        }
-      },
-      function(e) {
-        console.log("Error submitting form!");
-      }
-    );
-
-    //console.log("dfdfdf");
-    //callbackOnLoad();
-    //this.props.history.push("/box/" + this.props.match.params.id + "/show");
-    // fetch("http://127.0.0.1:3001/item", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/x-www-form-urlencoded"
-    //   },
-    //   body: data
-    // });
+    })
+      .then(
+        response => response.json() // if the response is a JSON object
+      )
+      .then(success => {
+        console.log(success); // Handle the success response object
+        this.props.history.push("/box/" + this.props.match.params.id + "/show");
+      })
+      .catch(error => {
+        console.log(error); // Handle the error response object
+        this.props.history.push("/box/" + this.props.match.params.id + "/show");
+      });
   };
 
   IsNameBusy = name => {
@@ -114,61 +115,6 @@ class WarehouseMain extends Component {
       this.setState({ nameValid: true });
     }
   };
-  nextItem = value => {
-    this.setState({ name: value });
-  };
-
-  updateData = value => {
-    this.setState({ name: value });
-  };
-
-  getData = url => {
-    return fetch(url)
-      .then(response => response.json())
-      .catch(function(e) {
-        console.log(e);
-      });
-  };
-  // asyncLoadData = async id => {
-  //   let JSONcur = await this.getData(
-  //     "http://127.0.0.1:3001/content/" + id //this.props.match.params.id
-  //   );
-  //   //let Now = moment();
-  //   //let DataTime = moment(JSONcur.rigs[0].ondate);
-  //   //let SecDiffdate = Now.diff(DataTime, "seconds");
-  //   this.setState({
-  //     Items: JSONcur
-  //   });
-  // };
-
-  /*
-
-        this.state.Items.breadcrumbs.push({
-        BOX: this.props.match.params.id,
-        name: this.state.Items.name
-      });
-
-
-
-      //проверим breadscram
-    if (
-      this.state.Items &&
-      this.state.Items.breadcrumbs &&
-      this.state.Items.breadcrumbs.length > 0
-    ) {
-      if (
-        this.props.match.params.id ==
-        this.state.Items.breadcrumbs[this.state.Items.breadcrumbs.length - 1]
-          .BOX
-      ) {
-        let Arr = this.state.Items.breadcrumbs;
-        Arr.pop();
-
-        const Items = update(this.state.Items, { breadcrumbs: { $set: Arr } });
-        this.setState({ Items });
-      }
-    }
-     */
 
   componentWillUnmount() {
     console.log("unmounting");
@@ -237,9 +183,9 @@ class WarehouseMain extends Component {
       //Ниже есть обработка смены id если она произошла то пойдем к ней
       if (nextProps.match.params.id === prevState.prevId) {
         return {
-          prevDo: _Do
+          prevDo: _Do,
           //запросим новые данные
-          // Items: null
+          Items: null
         };
       }
     }
@@ -273,21 +219,6 @@ class WarehouseMain extends Component {
       this._loadAsyncData(this.props.match.params.id);
     }
   }
-
-  // render() {
-  //   if (this.state.Items === null) {
-  //     // Render loading state ...
-  //     return <div>loading</div>;
-  //   } else {
-  //     // Render real UI ...
-  //     return (
-  //       <div>
-  //         <div>{this.props.match.params.id}</div>
-  //         <ContentTable Items={this.state.Items} />
-  //       </div>
-  //     );
-  //   }
-  // }
 
   render() {
     let main = null;
@@ -358,51 +289,24 @@ class WarehouseMain extends Component {
   }
 
   _loadAsyncData(id) {
-    if (id == 0) {
-      fetch("http://127.0.0.1:3001/root")
-        .then(response => response.json())
-        .then(JSONcur => {
-          this.setState({
-            Items: JSONcur
-          });
-        })
-        .catch(function(reason) {
-          console.log(reason);
-          // отказ
-        });
-    } else {
-      fetch("http://127.0.0.1:3001/item/" + id)
-        .then(itemDataStream => itemDataStream.json())
-        .then(itemData => {
-          this.setState({
-            Items: itemData
-          });
-        })
-        .catch(function(reason) {
-          console.log(reason);
-          // отказ
-        });
+    let url = "";
+    if (id === "0") url = "http://127.0.0.1:3001/root";
+    else url = "http://127.0.0.1:3001/item/" + id;
 
-      // let contentPromis = fetch("http://127.0.0.1:3001/content/" + id);
-      // let breadcrumbsPromis = fetch("http://127.0.0.1:3001/breadcrumbs/" + id);
-      /*
-        определить 
-        имя 
-        тип
-        */
-      // Promise.all([contentPromis, breadcrumbsPromis])
-      //   .then(data => {
-      //     let contentPromis = data[0].json();
-      //     let breadcrumbsPromis = data[1].json();
-      //     return Promise.all([contentPromis, breadcrumbsPromis]);
-      //   })
-      //   .then(data => {
-      //     this.setState({
-      //       Items: data[0],
-      //       BreadcrumbsItems: data[1]
-      //     });
-      //   });
-    }
+    fetch(url)
+      .then(itemDataStream => itemDataStream.json())
+      .then(itemData => {
+        this._FillModel(itemData);
+      })
+      .catch(function(reason) {
+        console.log(reason);
+        // отказ
+      });
+  }
+  _FillModel(itemData) {
+    this.setState({
+      Items: itemData
+    });
   }
 }
 
