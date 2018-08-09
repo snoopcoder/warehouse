@@ -13,8 +13,9 @@ import Breadcrumbs from "./Breadcrumbs.js";
 import ItemCard from "./ItemCard.js";
 import NewItemCard from "./NewItemCard.js";
 import ImageUpload from "./ImageUpload.js";
-import { Button } from "semantic-ui-react";
+import { Button } from "@material-ui/core";
 import update from "immutability-helper";
+import Loadable from "react-loading-overlay";
 import axios from "axios";
 import { SSL_OP_CIPHER_SERVER_PREFERENCE } from "constants";
 
@@ -68,21 +69,21 @@ class WarehouseMain extends Component {
     data.append("TextAreaInput", obj.TextAreaInput);
     data.append("parentId", obj.parentId);
 
-    fetch("http://127.0.0.1:3001/item", {
-      method: "POST",
-      body: data
-    })
-      .then(
-        response => response.json() // if the response is a JSON object
-      )
-      .then(success => {
-        console.log(success); // Handle the success response object
-        this.props.history.push("/box/" + this.props.match.params.id + "/show");
-      })
-      .catch(error => {
-        console.log(error); // Handle the error response object
-        this.props.history.push("/box/" + this.props.match.params.id + "/show");
-      });
+    // fetch("http://127.0.0.1:3001/item", {
+    //   method: "POST",
+    //   body: data
+    // })
+    //   .then(
+    //     response => response.json() // if the response is a JSON object
+    //   )
+    //   .then(success => {
+    //     console.log(success); // Handle the success response object
+    //     this.props.history.push("/box/" + this.props.match.params.id + "/show");
+    //   })
+    //   .catch(error => {
+    //     console.log(error); // Handle the error response object
+    //     this.props.history.push("/box/" + this.props.match.params.id + "/show");
+    //   });
   };
 
   IsNameBusy = name => {
