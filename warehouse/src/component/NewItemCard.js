@@ -9,18 +9,32 @@ import React, { Component } from "react";
 import ImageUpload from "./ImageUpload.js";
 import {
   Button,
-  Input,
-  Dropdown,
-  TextArea,
+  TextField,
   Form,
   Dimmer,
+  withStyles,
   Loader,
   Image,
   Segment
-} from "semantic-ui-react";
+} from "@material-ui/core";
 import axios from "axios";
-import "./semantic.min.css";
+import Loadable from "react-loading-overlay";
 import "./NewItemCard.css";
+
+const styles = theme => ({
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200
+  },
+  menu: {
+    width: 200
+  }
+});
 
 class NewItemCard extends Component {
   constructor(props) {
@@ -98,6 +112,7 @@ class NewItemCard extends Component {
     return null;
   }
   render() {
+    const { classes } = this.props;
     let MyForm = (
       <form>
         <div className="NewItemCard">
@@ -106,36 +121,38 @@ class NewItemCard extends Component {
           </div>
           <div className="nameText name-count-comm-Text">Название</div>
           <div className="nameInput name-count-comm-Input">
-            <Input
+            <TextField
+              error="true"
               id="nameInput"
               name="nameInput"
               error={!this.props.nameValid}
-              placeholder="Короткое описание"
+              label="Название"
+              className={classes.textField}
               onChange={this.handleUserInput}
-              value={this.state.nameInput}
+              //value={this.state.nameInput}
             />
           </div>
           <div className="countText name-count-comm-Text">Количество</div>
           <div className="countInput name-count-comm-Input">
-            <Dropdown
+            {/* <Dropdown
               name="countInput"
               placeholder="Количество"
               selection
               defaultValue="one"
               options={this.state.stateOptions}
               onChange={this.handleUserInput}
-            />
+            /> */}
           </div>
           <div className="commText name-count-comm-Text">Комментарий</div>
           <div className="commInput name-count-comm-Input">
             <div>
-              <TextArea
+              {/* <TextArea
                 name="TextAreaInput"
                 id="TextAreaInput"
                 autoHeight
                 placeholder="Можно внести необязательный комментарий"
                 onChange={this.handleUserInput}
-              />
+              /> */}
             </div>
           </div>
         </div>
@@ -151,25 +168,15 @@ class NewItemCard extends Component {
           <Button>Отмена</Button>
         </Link>
       </form>
+    ); // if (this.state.load)
+    let main = (
+      <Loadable active={this.state.load} spinner text="Loading...">
+        {MyForm}
+      </Loadable>
     );
-    let main = null;
-    if (this.state.load) {
-      main = (
-        <Segment>
-          <Dimmer active inverted>
-            <Loader active inverted>
-              Loading
-            </Loader>
-          </Dimmer>
-          {MyForm}
-        </Segment>
-      );
-    } else {
-      main = MyForm;
-    }
 
     return <div> {main}</div>;
   }
 }
-export default NewItemCard;
+export default withStyles(styles)(NewItemCard);
 //export default withRouter(NewItemCard);
