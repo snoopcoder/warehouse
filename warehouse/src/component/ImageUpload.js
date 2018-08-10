@@ -9,12 +9,16 @@ class ImageUpload extends React.Component {
 
   _handleImageChange(e) {
     e.preventDefault();
-
     let reader = new FileReader();
+
     let file = e.target.files[0];
+    //Это мой костыльный эвент. так как оригинал передавать нельзя, браузел его обнуляет
+    let event = {};
+    event.target = {};
+    event.target.value = file;
 
     reader.onloadend = () => {
-      this.props.onChange(e, { name: "file", value: file });
+      this.props.onChange(event);
       this.setState({
         imagePreviewUrl: reader.result
       });

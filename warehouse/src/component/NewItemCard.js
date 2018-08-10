@@ -15,11 +15,13 @@ import {
   withStyles,
   Loader,
   Image,
-  Segment
+  Segment,
+  MenuItem
 } from "@material-ui/core";
 import axios from "axios";
 import Loadable from "react-loading-overlay";
 import "./NewItemCard.css";
+import PropTypes from "prop-types";
 
 const styles = theme => ({
   container: {
@@ -36,6 +38,21 @@ const styles = theme => ({
   }
 });
 
+const countOptions = [
+  {
+    value: "1шт",
+    label: "1шт"
+  },
+  {
+    value: "много",
+    label: "много"
+  },
+  {
+    value: "мало",
+    label: "мало"
+  }
+];
+
 class NewItemCard extends Component {
   constructor(props) {
     super(props);
@@ -43,32 +60,39 @@ class NewItemCard extends Component {
       load: false,
       file: "",
       nameInput: "",
-      nameInputError: false,
+      // nameInputError: false,
       countInput: "1шт",
       TextAreaInput: "",
-      stateOptions: [
-        { key: "one", value: "one", text: "1шт" },
-        { key: "much", value: "much", text: "много" },
-        { key: "few", value: "few", text: "мало" }
-      ],
       formValid: false,
       nameValid: false
     };
   }
 
-  handleUserInput = (e, obje) => {
-    if (obje) {
-      const name = obje.name;
-      let value = obje.value;
-      if (name == "countInput") {
-        for (let item of this.state.stateOptions) {
-          if (item.value === value) value = item.text;
-        }
+  // handleUserInput = (e, obje) => {
+  //   if (obje) {
+  //     const name = obje.name;
+  //     let value = obje.value;
+  //     if (name == "countInput") {
+  //       for (let item of this.state.stateOptions) {
+  //         if (item.value === value) value = item.text;
+  //       }
+  //     }
+  //     this.setState({ [name]: value }, () => {
+  //       this.validateField(name, value);
+  //     });
+  //   }
+  // };
+
+  handleChange = name => event => {
+    let val = event.target.value;
+    this.setState(
+      {
+        [name]: val
+      },
+      () => {
+        this.validateField(name, val);
       }
-      this.setState({ [name]: value }, () => {
-        this.validateField(name, value);
-      });
-    }
+    );
   };
 
   validateField = (name, value) => {
@@ -99,7 +123,7 @@ class NewItemCard extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    //обработка отключения кнопки сохранить
+    //обработка отключения кнопки сохранить,nameValid и formValid могут быть не равны только при начальной отрисовки для красоты, когда имя еще не вводили, и поэтому не надо показывать ошибку
     if (
       nextProps.nameValid !== prevState.formValid &&
       prevState.nameInput.length > 0
@@ -117,23 +141,42 @@ class NewItemCard extends Component {
       <form>
         <div className="NewItemCard">
           <div className="image">
-            <ImageUpload onChange={this.handleUserInput} />
+            <ImageUpload onChange={this.handleChange("file")} />
           </div>
           <div className="nameText name-count-comm-Text">Название</div>
           <div className="nameInput name-count-comm-Input">
             <TextField
-              error="true"
+              error={!this.props.nameValid}
               id="nameInput"
               name="nameInput"
-              error={!this.props.nameValid}
-              label="Название"
+              //error={!this.props.nameValid}
               className={classes.textField}
-              onChange={this.handleUserInput}
+              onChange={this.handleChange("nameInput")}
               //value={this.state.nameInput}
             />
           </div>
           <div className="countText name-count-comm-Text">Количество</div>
           <div className="countInput name-count-comm-Input">
+            <TextField
+              id="select-currency"
+              select
+              className={classes.textField}
+              value={this.state.countInput}
+              onChange={this.handleChange("countInput")}
+              SelectProps={{
+                MenuProps: {
+                  className: classes.menu
+                }
+              }}
+              margin="normal"
+            >
+              {countOptions.map(option => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+
             {/* <Dropdown
               name="countInput"
               placeholder="Количество"
@@ -146,6 +189,14 @@ class NewItemCard extends Component {
           <div className="commText name-count-comm-Text">Комментарий</div>
           <div className="commInput name-count-comm-Input">
             <div>
+              <TextField
+                id="textarea"
+                placeholder="необязательный"
+                multiline
+                className={classes.textField}
+                margin="normal"
+                onChange={this.handleChange("TextAreaInput")}
+              />
               {/* <TextArea
                 name="TextAreaInput"
                 id="TextAreaInput"
@@ -178,5 +229,8 @@ class NewItemCard extends Component {
     return <div> {main}</div>;
   }
 }
+NewItemCard.propTypes = {
+  classes: PropTypes.object.isRequired
+};
 export default withStyles(styles)(NewItemCard);
 //export default withRouter(NewItemCard);
