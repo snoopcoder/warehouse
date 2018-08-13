@@ -3,9 +3,25 @@ import React, { Component } from "react";
 import "./common.css";
 import "./header.css";
 import "./ticket-table.css";
+import PropTypes from "prop-types";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
+
+const styles = {
+  checked: {},
+  size: {
+    width: 40,
+    height: 40
+  },
+  sizeIcon: {
+    fontSize: 20
+  }
+};
 
 class contentTable extends Component {
+  HandleCheckBoc = id => {};
   render() {
+    const { classes } = this.props;
     return (
       <div className="ticket-table-wrapper">
         <table id="ticket-table">
@@ -22,10 +38,23 @@ class contentTable extends Component {
             {this.props.Items.map((item, i) => (
               <tr key={i}>
                 <td>
-                  <label className="checkbox">
+                  {/* <label className="checkbox">
                     <input type="checkbox" />
                     <div className="checkbox__text" />
-                  </label>
+                  </label> */}
+
+                  {this.props.mode === "edit" && (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          // checked={this.state.checkedA}
+                          // onChange={this.handleChange('checkedA')}
+                          value="checkedA"
+                          color="primary"
+                        />
+                      }
+                    />
+                  )}
                 </td>
                 <td>
                   <img
@@ -54,4 +83,9 @@ class contentTable extends Component {
     );
   }
 }
-export default contentTable;
+
+contentTable.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default withStyles(styles)(contentTable);

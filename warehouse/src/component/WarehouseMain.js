@@ -13,6 +13,7 @@ import Breadcrumbs from "./Breadcrumbs.js";
 import ItemCard from "./ItemCard.js";
 import NewItemCard from "./NewItemCard.js";
 import ImageUpload from "./ImageUpload.js";
+import ToolBox from "./ToolBox.js";
 import { Button } from "@material-ui/core";
 import update from "immutability-helper";
 import Loadable from "react-loading-overlay";
@@ -27,7 +28,15 @@ class WarehouseMain extends Component {
   state = {
     ItemsArr: { rigs: [] },
     DataOld: 0,
-    nameValid: true
+    mode: "normal",
+    ToolBoxButton: {
+      Add: true,
+      Edit: true,
+      DeleteForever: true,
+      Save: true,
+      SwapHoriz: true,
+      NotInterested: true
+    }
   };
 
   /*
@@ -59,6 +68,61 @@ class WarehouseMain extends Component {
 4 переделать создание и изменение
 5 переделать корректировку крошек*/
 
+  ToolBoxButtonHelper = (name, value) => {
+    /*let ToolBoxButton={
+    Add : true,
+    Edit: true,
+    DeleteForever: true,
+    Save: true,
+    SwapHoriz: true,
+    NotInterested: true
+
+  }*/
+    let ToolBoxButton = this.state.ToolBoxButton;
+    ToolBoxButton[name] = value;
+    // this.setState({
+    //   ToolBoxButton: ToolBoxButton
+    // });
+  };
+
+  handleList = id => {};
+
+  handleToolBox = name => {
+    switch (name) {
+      case "MarkupListEdit": {
+        if (this.state.mode === "normal") {
+          this.setState({
+            mode: "edit"
+          });
+        } else if (this.state.mode === "edit") {
+          this.setState({
+            mode: "normal"
+          });
+        }
+        break;
+      }
+      case "MarkupListAdd": {
+        //'{"/box/" + this.state.Items.id + "/new"}
+        this.props.history.push("/box/" + this.props.match.params.id + "/new");
+        break;
+      }
+      case "MarkupNewNotInterested": {
+        //'{"/box/" + this.state.Items.id + "/new"}
+        this.props.history.push("/box/" + this.props.match.params.id + "/show");
+        break;
+      }
+      //
+      case "MarkupNewSave": {
+        this.setState({
+          mode: "save"
+        });
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
   handleSubmit = async obj => {
     ///console.log(this.state.nameInput);
 
@@ -78,10 +142,14 @@ class WarehouseMain extends Component {
       )
       .then(success => {
         console.log(success); // Handle the success response object
-        this.props.history.push("/box/" + this.props.match.params.id + "/show");
       })
       .catch(error => {
         console.log(error); // Handle the error response object
+      })
+      .then(() => {
+        this.setState({
+          mode: "show"
+        });
         this.props.history.push("/box/" + this.props.match.params.id + "/show");
       });
   };
@@ -147,8 +215,7 @@ class WarehouseMain extends Component {
       return {
         //Items: Arr,
         prevDo: _Do,
-        //чтобы первоначальная закраска инпута не была красной
-        nameValid: true,
+        nameValid: false,
         //запросим новые данные
         Items: null
       };
@@ -178,7 +245,7 @@ class WarehouseMain extends Component {
         Items: null,
         prevId: nextProps.match.params.id,
         prevDo: _Do,
-        nameValid: true
+        nameValid: false
       };
     }
     // No state update necessary
@@ -222,11 +289,18 @@ class WarehouseMain extends Component {
             Items={this.state.Items.breadcrumbs}
             Name={"Новый предмет"}
           />
+          <ToolBox
+            do="new"
+            handleToolBox={this.handleToolBox}
+            mode={this.state.mode}
+            nameValid={this.state.nameValid}
+          />
           <NewItemCard
             checkName={this.checkName}
             handleSubmit={this.handleSubmit}
             nameValid={this.state.nameValid}
             parentId={this.props.match.params.id}
+            mode={this.state.mode}
           />
         </div>
       );
@@ -238,6 +312,7 @@ class WarehouseMain extends Component {
             Items={this.state.Items.breadcrumbs}
             Name={this.state.Items.name}
           />
+          <ToolBox do="item" />
           <ItemCard Items={this.state.Items} />
         </div>
       );
@@ -249,10 +324,19 @@ class WarehouseMain extends Component {
             Items={this.state.Items.breadcrumbs}
             Name={this.state.Items.name}
           />
+          <ToolBox
+            do="list"
+            handleToolBox={this.handleToolBox}
+            ToolBoxButton={this.ToolBoxButton}
+            mode={this.state.mode}
+          />
           <Link to={"/box/" + this.state.Items.id + "/new"}>
             <Button>New</Button>
           </Link>
-          <ContentTable Items={this.state.Items.content} />
+          <ContentTable
+            Items={this.state.Items.content}
+            mode={this.state.mode}
+          />
         </div>
       );
     }

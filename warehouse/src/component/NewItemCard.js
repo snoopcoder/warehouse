@@ -64,7 +64,8 @@ class NewItemCard extends Component {
       countInput: "1шт",
       TextAreaInput: "",
       formValid: false,
-      nameValid: false
+      nameValid: false,
+      FirstTime: true
     };
   }
 
@@ -110,9 +111,7 @@ class NewItemCard extends Component {
     this.history.push("/box/" + this.props.match.params.id + "/show");
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    this.setState({ load: true });
+  Submit = () => {
     let obj = {};
     obj.myFile = this.state.file;
     obj.nameInput = this.state.nameInput;
@@ -122,6 +121,16 @@ class NewItemCard extends Component {
     this.props.handleSubmit(obj);
   };
 
+  handleSubmit = event => {
+    event.preventDefault();
+    this.setState({ load: true });
+    this.Submit();
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.FirstTime) this.setState({ FirstTime: false });
+    if (this.props.mode === "save") this.Submit();
+  }
   static getDerivedStateFromProps(nextProps, prevState) {
     //обработка отключения кнопки сохранить,nameValid и formValid могут быть не равны только при начальной отрисовки для красоты, когда имя еще не вводили, и поэтому не надо показывать ошибку
     if (
@@ -130,6 +139,11 @@ class NewItemCard extends Component {
     ) {
       return {
         formValid: nextProps.nameValid
+      };
+    }
+    if (nextProps.mode === "save") {
+      return {
+        load: true
       };
     }
     // No state update necessary
@@ -146,7 +160,7 @@ class NewItemCard extends Component {
           <div className="nameText name-count-comm-Text">Название</div>
           <div className="nameInput name-count-comm-Input">
             <TextField
-              error={!this.props.nameValid}
+              error={this.state.FirstTime ? false : !this.props.nameValid}
               id="nameInput"
               name="nameInput"
               //error={!this.props.nameValid}
@@ -169,6 +183,9 @@ class NewItemCard extends Component {
                 }
               }}
               margin="normal"
+              InputProps={{
+                readOnly: true
+              }}
             >
               {countOptions.map(option => (
                 <MenuItem key={option.value} value={option.value}>
@@ -209,7 +226,7 @@ class NewItemCard extends Component {
         </div>
 
         <Button
-          disabled={!this.state.formValid}
+          disabled={!this.props.nameValid}
           onClick={this.handleSubmit}
           value="Submit"
         >
