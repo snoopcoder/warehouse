@@ -1,0 +1,21 @@
+
+ #commentScroll
+ {
+    border-radius: 6px;
+    border:  1px solid #ced4da;
+    background-color: #ffffff;
+ }
+ #commentTextArea
+ {
+    width: 318px;
+     border: none;
+    overflow: auto;
+    outline: none;
+    box-shadow: none;
+    resize: none;
+    border-radius: 6px; 
+ }
+  .commentShine
+{
+    box-shadow:  0 0 0 0.2rem rgba(0,123,255,.25)
+}

@@ -1,7 +1,5 @@
-.ticket-table-wrapper {
-  margin: 100px auto;
-  background-color: rgba(235, 233, 247, 1);
-  width: 80%;
+.ticket-table-wrapper {  
+  background-color: rgba(235, 233, 247, 1); 
   height: 100%;
   padding: 24px;
 }

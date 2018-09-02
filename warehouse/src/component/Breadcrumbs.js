@@ -8,13 +8,15 @@ class Breadcrumbs extends Component {
     let main = null;
     if (!this.props.Items) {
       main = (
-        <ul className="hr">
-          <li>{String.fromCharCode(62) + String.fromCharCode(62)}</li>
+        <ul id="breadcrumb">
+          <li className="title">
+            {String.fromCharCode(62) + String.fromCharCode(62)}
+          </li>
         </ul>
       );
     } else {
       main = (
-        <ul className="hr">
+        <ul id="breadcrumb">
           <li key={shortid.generate()}>
             <Link to="/box/0/show">
               {String.fromCharCode(62) + String.fromCharCode(62)}
@@ -25,7 +27,9 @@ class Breadcrumbs extends Component {
               <Link to={"/box/" + item.BOX + "/show"}>{item.name}</Link>
             </li>
           ))}
-          <li key={shortid.generate()}>{this.props.Name}</li>
+          <li key={shortid.generate()} className="title">
+            {this.props.Name}
+          </li>
         </ul>
       );
     }

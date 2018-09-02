@@ -1,0 +1,29 @@
+.Button {      
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+  }
+  .Button:not(.disabled ) {
+    transform: scale(0.95);
+  }
+  .Button.disabled {
+    opacity: 0.65; 
+    cursor: not-allowed;
+  }
+  
+  .Button.fa {
+    pointer-events: none;
+  }
+  .Button:hover:not(.disabled) {   
+    filter: brightness(120%);
+    transform: scale(1);
+    cursor: pointer;
+  }
+  .Button:active:not(.disabled) {   
+    filter: brightness(80%);
+    transform: scale(0.9);
+  }

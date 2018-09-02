@@ -23,7 +23,7 @@ class contentTable extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className="ticket-table-wrapper">
+      <div className="ticket-table-wrapper col-xl-10">
         <table id="ticket-table">
           <thead>
             <tr>

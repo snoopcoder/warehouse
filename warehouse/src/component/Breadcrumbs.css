@@ -8,3 +8,49 @@ ul.hr {
     border: 1px solid #000; /* Рамка вокруг текста */
     padding: 3px; /* Поля вокруг текста */
    }
+   #breadcrumb {
+    padding: 50px 15px;
+    margin-bottom: 20px;
+    list-style: none;
+    background-color: #ecf0f1;
+    border-radius: 4px;    
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-align:left;
+      
+    
+}
+
+
+#breadcrumb>ul {
+    margin-left: 50px;
+}
+
+#breadcrumb>li {
+    display: inline-block;
+}
+
+#breadcrumb>li+li:before {
+    content: "/\00a0";
+    padding: 0 5px;
+    color: #cccccc;
+}
+
+#breadcrumb .title {
+    font-weight: 800;
+    color: #1abc9c;
+}
+#breadcrumb a {
+    color: #869198;
+}
+
+
+
+#topbox #breadcrumb {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    padding: 15px 20px 15px 40px;
+    border-bottom: 1px solid #dddddd;
+}

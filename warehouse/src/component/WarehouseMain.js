@@ -13,16 +13,34 @@ import Breadcrumbs from "./Breadcrumbs.js";
 import ItemCard from "./ItemCard.js";
 import NewItemCard from "./NewItemCard.js";
 import ImageUpload from "./ImageUpload.js";
-import ToolBox from "./ToolBox.js";
+// import ToolBox from "./ToolBox.js";
 import { Button } from "@material-ui/core";
 import update from "immutability-helper";
 import Loadable from "react-loading-overlay";
+import Baron from "react-baron/dist/es5";
 import axios from "axios";
 import { SSL_OP_CIPHER_SERVER_PREFERENCE } from "constants";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTrashAlt,
+  faPlus,
+  faExchangeAlt,
+  faEdit,
+  faBars
+} from "@fortawesome/free-solid-svg-icons";
+
+import MyButton from "./MyButton";
+import SidePanel from "./SidePanel";
+
+import "./WarehouseMain.css";
 
 function isNumber(obj) {
   return !isNaN(parseFloat(obj));
 }
+
+library.add(faTrashAlt, faPlus, faExchangeAlt, faEdit, faBars);
 
 class WarehouseMain extends Component {
   state = {
@@ -266,15 +284,17 @@ class WarehouseMain extends Component {
 
   render() {
     let main = null;
+    let breadcrumb = null;
     //условный рендеринг
     if (!this.state.Items) {
       //не загружены данные отображаем калач
+      breadcrumb = <Breadcrumbs />;
       main = <div>loading</div>;
     } else if (this.props.match.params.id == 0) {
       //это рут
+      breadcrumb = <Breadcrumbs />;
       main = (
         <div>
-          <Breadcrumbs />
           <ParentList Items={this.state.Items} />
         </div>
       );
@@ -283,18 +303,20 @@ class WarehouseMain extends Component {
       this.props.match.params.do === "new"
     ) {
       //Новый предмет
+      breadcrumb = (
+        <Breadcrumbs
+          Items={this.state.Items.breadcrumbs}
+          Name={"Новый предмет"}
+        />
+      );
       main = (
         <div>
-          <Breadcrumbs
-            Items={this.state.Items.breadcrumbs}
-            Name={"Новый предмет"}
-          />
-          <ToolBox
+          {/* <ToolBox
             do="new"
             handleToolBox={this.handleToolBox}
             mode={this.state.mode}
             nameValid={this.state.nameValid}
-          />
+          /> */}
           <NewItemCard
             checkName={this.checkName}
             handleSubmit={this.handleSubmit}
@@ -306,33 +328,36 @@ class WarehouseMain extends Component {
       );
     } else if (this.state.Items.content.length == 0) {
       //карточка предмета
+      breadcrumb = (
+        <Breadcrumbs
+          Items={this.state.Items.breadcrumbs}
+          Name={this.state.Items.name}
+        />
+      );
       main = (
         <div>
-          <Breadcrumbs
-            Items={this.state.Items.breadcrumbs}
-            Name={this.state.Items.name}
-          />
-          <ToolBox do="item" />
+          {/* <ToolBox do="item" /> */}
           <ItemCard Items={this.state.Items} />
         </div>
       );
     } else {
       //разметка для коробки
+      breadcrumb = (
+        <Breadcrumbs
+          Items={this.state.Items.breadcrumbs}
+          Name={this.state.Items.name}
+        />
+      );
       main = (
         <div>
-          <Breadcrumbs
-            Items={this.state.Items.breadcrumbs}
-            Name={this.state.Items.name}
-          />
-          <ToolBox
-            do="list"
-            handleToolBox={this.handleToolBox}
-            ToolBoxButton={this.ToolBoxButton}
-            mode={this.state.mode}
-          />
-          <Link to={"/box/" + this.state.Items.id + "/new"}>
-            <Button>New</Button>
-          </Link>
+          <div className="col-xl-10">
+            {/* <ToolBox
+              do="list"
+              handleToolBox={this.handleToolBox}
+              ToolBoxButton={this.ToolBoxButton}
+              mode={this.state.mode}
+            /> */}
+          </div>
           <ContentTable
             Items={this.state.Items.content}
             mode={this.state.mode}
@@ -342,9 +367,16 @@ class WarehouseMain extends Component {
     }
 
     return (
-      <div className="WareHousePage">
-        <div className="WareHouseLeft" />
-        <div className="WareHouseMain"> {main}</div>
+      <div id="wrapper">
+        <div id="sidebar">
+          <SidePanel />
+        </div>
+        <div id="topbox" className="WareHouseLeft">
+          {breadcrumb}
+        </div>
+        <div id="content" className="WareHouseMain">
+          <Baron>{main}</Baron>
+        </div>
       </div>
     );
   }
