@@ -3,11 +3,30 @@ import { Button, ButtonGroup } from "reactstrap";
 
 import ToggleButton from "react-toggle-button";
 
+let countTypeObj = {
+  many: false,
+  mach: true
+};
+
 class EditCountArea extends Component {
-  constructor() {
-    super();
-    this.state = { value: false };
+  constructor(props) {
+    super(props);
+    this.state = { value: countTypeObj[props.Items.count_type] };
   }
+
+  onToggle = value => {
+    this.setState(
+      {
+        value: !value
+      },
+      () => {
+        this.props.inputHandler(
+          "changeCountType",
+          this.state.value ? "mach" : "many"
+        );
+      }
+    );
+  };
 
   render() {
     return (
@@ -41,11 +60,7 @@ class EditCountArea extends Component {
               }
             }}
             value={this.state.value}
-            onToggle={value => {
-              this.setState({
-                value: !value
-              });
-            }}
+            onToggle={this.onToggle}
           />
         </div>
       </div>

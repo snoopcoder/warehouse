@@ -13,8 +13,6 @@ import {
 import onClickOutside from "react-onclickoutside";
 import "./MachCount.css";
 
-let MachArr = ["мало", "много"];
-
 class MachCount extends Component {
   constructor(props) {
     super(props);
@@ -22,21 +20,23 @@ class MachCount extends Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       dropdownOpen: false,
-      edit: false
+      edit: false,
+      countTemp: props.Items.count_mach
     };
   }
-
-  _handleKeyPress = e => {
-    if (e.key === "Enter") {
-      this.setState({ edit: false });
-      console.log("do validate");
+  handleSubmit = () => {
+    if (this.state.countTemp !== this.props.Items.count_mach) {
+      this.props.inputHandler("changeMachCount", this.state.countTemp, true);
     }
   };
 
   handleClickOutside = evt => {
     // ..handling code goes here...
     console.log("unclick");
-    this.setState({ edit: false });
+    this.setState({
+      countTemp: this.props.Items.count_mach,
+      edit: false
+    });
   };
 
   onClick = target => {
@@ -48,15 +48,21 @@ class MachCount extends Component {
         break;
       }
       case "ok": {
-        console.log("must save");
         this.setState({ edit: false });
+        this.handleSubmit();
         break;
       }
       case "few": {
+        this.setState({
+          countTemp: "мало"
+        });
         console.log("few");
         break;
       }
       case "mach": {
+        this.setState({
+          countTemp: "много"
+        });
         console.log("mach");
         break;
       }
@@ -80,7 +86,7 @@ class MachCount extends Component {
     if (this.state.edit === false) {
       main = (
         <div onClick={() => this.onClick("view")}>
-          {MachArr[this.props.count]}
+          {this.props.Items.count_mach}
         </div>
       );
     } else {
@@ -104,7 +110,7 @@ class MachCount extends Component {
               toggle={this.toggle}
             >
               <DropdownToggle caret size="sm">
-                {MachArr[this.props.count]}
+                {this.state.countTemp}
               </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem onClick={e => this.onClick("few")}>

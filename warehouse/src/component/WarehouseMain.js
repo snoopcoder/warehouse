@@ -10,7 +10,8 @@ import React, { Component } from "react";
 import ContentTable from "./ContentTable.js";
 import ParentList from "./ParentList.js";
 import Breadcrumbs from "./Breadcrumbs.js";
-import ItemCard from "./ItemCard.js";
+import ItemCardOld from "./ItemCardOld.js";
+import ItemCard from "./ItemCard";
 import NewItemCard from "./NewItemCard.js";
 import ImageUpload from "./ImageUpload.js";
 // import ToolBox from "./ToolBox.js";
@@ -54,6 +55,12 @@ class WarehouseMain extends Component {
       Save: true,
       SwapHoriz: true,
       NotInterested: true
+    },
+    panelNow: {
+      add: false,
+      move: false,
+      edit: false,
+      del: false
     }
   };
 
@@ -141,35 +148,56 @@ class WarehouseMain extends Component {
     }
   };
 
-  handleSubmit = async obj => {
-    ///console.log(this.state.nameInput);
-
-    const data = new FormData();
-    if (obj.myFile !== "") data.append("myFile", obj.myFile, "logo.jpg");
-    data.append("nameInput", obj.nameInput);
-    data.append("countInput", obj.countInput);
-    data.append("TextAreaInput", obj.TextAreaInput);
-    data.append("parentId", obj.parentId);
-
-    fetch("http://127.0.0.1:3001/item", {
-      method: "POST",
-      body: data
-    })
-      .then(
-        response => response.json() // if the response is a JSON object
-      )
-      .then(success => {
-        console.log(success); // Handle the success response object
-      })
-      .catch(error => {
-        console.log(error); // Handle the error response object
-      })
-      .then(() => {
+  handleSidePanel = Do => {
+    switch (Do) {
+      case "add": {
+        //'{"/box/" + this.state.Items.id + "/new"}
+        this.props.history.push("/box/" + this.props.match.params.id + "/new");
+        break;
+      }
+      case "edit": {
         this.setState({
-          mode: "show"
+          mode: "edit"
         });
-        this.props.history.push("/box/" + this.props.match.params.id + "/show");
-      });
+        break;
+      }
+    }
+    console.log(Do);
+  };
+
+  handleSubmit = async obj => {
+    console.log(obj);
+    this.setState({
+      mode: "show"
+    });
+    return;
+
+    // const data = new FormData();
+    // if (obj.myFile !== "") data.append("myFile", obj.myFile, "logo.jpg");
+    // data.append("nameInput", obj.nameInput);
+    // data.append("countInput", obj.countInput);
+    // data.append("TextAreaInput", obj.TextAreaInput);
+    // data.append("parentId", obj.parentId);
+
+    // fetch("http://127.0.0.1:3001/item", {
+    //   method: "POST",
+    //   body: data
+    // })
+    //   .then(
+    //     response => response.json() // if the response is a JSON object
+    //   )
+    //   .then(success => {
+    //     console.log(success); // Handle the success response object
+    //   })
+    //   .catch(error => {
+    //     console.log(error); // Handle the error response object
+    //   })
+    //   .then(() => {
+    //     this.setState({
+    //       mode: "show"
+    //     });
+    //     this.props.history.push("/box/" + this.props.match.params.id + "/show");
+    //   });
   };
 
   IsNameBusy = name => {
@@ -221,6 +249,10 @@ class WarehouseMain extends Component {
     if (prevState.hasOwnProperty("prevDo")) {
       _Do = prevState.prevDo;
     }
+    //изза случаая когда в url опущен  параметр DO коректировка
+    let doNow = nextProps.match.params.do ? nextProps.match.params.do : "show";
+    //корректировка если рут
+    if (nextProps.match.params.id === "0") doNow = "showRoot";
 
     //определить что сейчас происходит
     if (
@@ -235,7 +267,8 @@ class WarehouseMain extends Component {
         prevDo: _Do,
         nameValid: false,
         //запросим новые данные
-        Items: null
+        Items: null,
+        panelNow: changePanel(doNow)
       };
     }
     if (
@@ -248,7 +281,8 @@ class WarehouseMain extends Component {
       return {
         prevDo: _Do,
         //запросим новые данные
-        Items: null
+        Items: null,
+        panelNow: changePanel(doNow)
       };
     }
 
@@ -263,7 +297,8 @@ class WarehouseMain extends Component {
         Items: null,
         prevId: nextProps.match.params.id,
         prevDo: _Do,
-        nameValid: false
+        nameValid: false,
+        panelNow: changePanel(doNow)
       };
     }
     // No state update necessary
@@ -337,7 +372,13 @@ class WarehouseMain extends Component {
       main = (
         <div>
           {/* <ToolBox do="item" /> */}
-          <ItemCard Items={this.state.Items} />
+          {/**/}
+          <ItemCard
+            EditMode={this.state.mode === "edit" ? true : false}
+            Items={this.state.Items}
+            handleSubmit={this.handleSubmit}
+            checkName={this.checkName}
+          />
         </div>
       );
     } else {
@@ -369,7 +410,10 @@ class WarehouseMain extends Component {
     return (
       <div id="wrapper">
         <div id="sidebar">
-          <SidePanel />
+          <SidePanel
+            panelNow={this.state.panelNow}
+            onClick={this.handleSidePanel}
+          />
         </div>
         <div id="topbox" className="WareHouseLeft">
           {breadcrumb}
@@ -420,3 +464,42 @@ class WarehouseMain extends Component {
 }
 
 export default withRouter(WarehouseMain);
+
+let changePanel = doNow => {
+  let panelNow = {
+    add: false,
+    move: false,
+    edit: false,
+    del: false
+  };
+  switch (doNow) {
+    case "show": {
+      panelNow = {
+        add: false,
+        move: true,
+        edit: false,
+        del: false
+      };
+      break;
+    }
+    case "showRoot": {
+      panelNow = {
+        add: true,
+        move: true,
+        edit: true,
+        del: true
+      };
+      break;
+    }
+    case "new": {
+      panelNow = {
+        add: true,
+        move: true,
+        edit: true,
+        del: true
+      };
+      break;
+    }
+  }
+  return panelNow;
+};

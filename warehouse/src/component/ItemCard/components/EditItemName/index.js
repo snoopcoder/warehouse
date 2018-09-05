@@ -9,6 +9,9 @@ import {
 } from "reactstrap";
 
 class EditItemName extends Component {
+  onChange = e => {
+    this.props.inputHandler("changeName", e.target.value);
+  };
   render() {
     return (
       <div
@@ -27,6 +30,7 @@ class EditItemName extends Component {
         >
           <InputGroup size="sm">
             <Input
+              onChange={this.onChange}
               invalid
               onKeyPress={this._handleKeyPress}
               autoFocus={true}
@@ -34,7 +38,7 @@ class EditItemName extends Component {
                 fontFamily: "Roboto, Helvetica, sans-serif",
                 fontSize: "18px"
               }}
-              defaultValue="dfdfdfdfddfdf"
+              defaultValue={this.props.Items.name}
             />
           </InputGroup>
         </div>

@@ -25,10 +25,12 @@ class EditComment extends Component {
     this.setState({ commentShine: true });
     console.log("focus");
   };
-
+  onChange = e => {
+    this.props.inputHandler("changeComment", e.target.value);
+  };
   render() {
     return (
-      <div style={{ width: "320px", height: "300px", fontSize: "8pt" }}>
+      <div style={{ width: "320px", height: "250px", fontSize: "8pt" }}>
         <Scrollbars
           id="commentScroll"
           autoHeight
@@ -38,9 +40,11 @@ class EditComment extends Component {
         >
           <TextareaAutosize
             id="commentTextArea"
+            defaultValue={this.props.Items.comment}
+            onChange={this.onChange}
             onFocus={this.onFocusHandler}
             onBlur={this.onBlurHandler}
-            rows="6"
+            rows={6}
           />
         </Scrollbars>
       </div>

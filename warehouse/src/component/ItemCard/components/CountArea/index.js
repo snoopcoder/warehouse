@@ -6,7 +6,7 @@ class CountArea extends Component {
   render() {
     return (
       <div>
-        {this.props.CountType === "many" ? (
+        {this.props.Items.count_type === "many" ? (
           <ManyCount {...this.props} />
         ) : (
           <MachCount {...this.props} />

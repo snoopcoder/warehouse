@@ -4,7 +4,8 @@ import "./MyButton.css";
 
 class MyButton extends Component {
   onClick = () => {
-    console.log("click");
+    // console.log("click");
+    this.props.onClick();
   };
   render() {
     return (
