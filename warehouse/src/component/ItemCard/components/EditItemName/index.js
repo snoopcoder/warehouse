@@ -9,6 +9,10 @@ import {
 } from "reactstrap";
 
 class EditItemName extends Component {
+  componentDidMount() {
+    this.props.inputHandler("changeName", this.props.Items.name);
+  }
+
   onChange = e => {
     this.props.inputHandler("changeName", e.target.value);
   };
@@ -31,14 +35,18 @@ class EditItemName extends Component {
           <InputGroup size="sm">
             <Input
               onChange={this.onChange}
-              invalid
+              invalid={!this.props.nameValid}
               onKeyPress={this._handleKeyPress}
               autoFocus={true}
               style={{
                 fontFamily: "Roboto, Helvetica, sans-serif",
                 fontSize: "18px"
               }}
-              defaultValue={this.props.Items.name}
+              defaultValue={
+                this.props.Items.name === "Новый предмет"
+                  ? ""
+                  : this.props.Items.name
+              }
             />
           </InputGroup>
         </div>

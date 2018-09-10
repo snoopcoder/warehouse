@@ -6,12 +6,14 @@ import {routes, allowedMethods} from './middleware/routes';
 
 const Koa = require("koa");
 const cors = require("@koa/cors");
+var bodyParser = require("koa-bodyparser");
 var config = require("config");
 const routes = require("./middleware/routes");
 const Err = require("./middleware/error");
 const serve = require("koa-static-server");
 
 const app = new Koa();
+app.use(bodyParser());
 //var router = new Router();
 app.use(cors());
 app.use(serve({ rootDir: __dirname + "\\public", rootPath: "/public" }));

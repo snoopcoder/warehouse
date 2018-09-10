@@ -4,9 +4,29 @@ import "./Breadcrumbs.css";
 var shortid = require("shortid");
 
 class Breadcrumbs extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      Items: props.Items
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    //это для предотвращения рывка перерисовки, когда данные списка еще не пришли с сервера, и на его месте калач. без этого своеобразного
+    //буфера данных будет отрисока при отсутвии данных, а это случай отрисовки рута. поэтому во время всех переходов крошки будут дергаться на
+    //перересовку рутовой дорожки
+    if (!nextProps.updateDisabled) {
+      return {
+        Items: nextProps.Items
+      };
+    }
+
+    return null;
+  }
+
   render() {
     let main = null;
-    if (!this.props.Items) {
+    if (!this.state.Items) {
       main = (
         <ul id="breadcrumb">
           <li className="title">
@@ -22,7 +42,7 @@ class Breadcrumbs extends Component {
               {String.fromCharCode(62) + String.fromCharCode(62)}
             </Link>
           </li>
-          {this.props.Items.map((item, i) => (
+          {this.state.Items.map((item, i) => (
             <li key={shortid.generate()}>
               <Link to={"/box/" + item.BOX + "/show"}>{item.name}</Link>
             </li>

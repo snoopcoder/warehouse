@@ -1,0 +1,27 @@
+#PhotoBig-main-div{ 
+line-height: 500px;
+}
+
+.img-container-2 {
+    object-fit: scale-down;
+    max-width: 90%;
+    max-height: 480px;    
+    margin-top:5px;
+    margin-bottom: 5px;
+    box-shadow: 4px 4px 20px 0 rgba(0,0,0,.25);    
+    
+}
+
+/*вариант с background через css но при этом маленькие картинки увеличиваются и превращаются в мыло*/
+
+.img-container-3 {
+    background: url('http://127.0.0.1:3001/public/2ecb6499-40ee-4447-96d1-8e6f4a1543af.jpg') center center no-repeat;
+    width: 90%;
+    height: 540px;
+    background-size: contain;
+    margin-left: 5%;
+    margin-left: 5%;
+    margin-top:5px;
+    margin-bottom: 5px;
+    
+}

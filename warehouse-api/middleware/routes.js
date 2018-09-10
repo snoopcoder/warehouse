@@ -67,7 +67,8 @@ router
       ctx.status = 204;
     }
   })
-  .post("/item", async (ctx, next) => {
+  .post("/images", async (ctx, next) => {
+    //TODo тут будет код обрабатывающюий загрузку картинки
     let warnings = "";
     const { files, fields } = await asyncBusboy(ctx.req);
     let fname = "";
@@ -76,20 +77,6 @@ router
       let ftempfullpath = files[0].path;
       files[0].destroy();
       if (files[0].mimeType == "image/jpeg") {
-        // //не будем ждать чтобы калач долго не крутился
-        // MoveFile(ftempfullpath, fname)
-        //   .then(fname => {
-        //     return Jimp.read(FileDir + fname);
-        //   })
-        //   .then(logo => {
-        //     return logo
-        //       .scaleToFit(71, 71) // resize
-        //       .write(FileDir + "logo_" + fname); // save
-        //   })
-        //   .catch(err => {
-        //     console.error(err);
-        //   });
-
         fname = await MoveFile(ftempfullpath, fname);
         await Jimp.read(FileDir + fname)
           .then(logo => {
@@ -106,29 +93,48 @@ router
         fname = "";
       }
     }
-    let { nameInput, countInput, TextAreaInput, parentId } = fields;
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //TextAreaInput = "";
-    //
-    let id = await item.create({
-      nameInput,
-      countInput,
-      TextAreaInput,
-      parentId,
-      fname
-    });
-    if (id > 0) {
-      ctx.body = { id: id };
-      ctx.status = 200;
-    } else {
-      ctx.status = 409;
-    }
-
-    //ctx.body = "dfdffd";
   })
-  .put("/item/:id", async (ctx, next) => {
-    ctx.status = 204;
-    await item.update(ctx.params.id, ctx.request.body);
+
+  .post("/item", async (ctx, next) => {
+    // let { nameInput, countInput, TextAreaInput, parentId } = fields;
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // let id = await item.create({
+    //   nameInput,
+    //   countInput,
+    //   TextAreaInput,
+    //   parentId,
+    //   fname
+    // });
+    // if (id > 0) {
+    //   ctx.body = { id: id };
+    //   ctx.status = 200;
+    // } else {
+    //   ctx.status = 409;
+    // }
+
+    let Items = ctx.request.body;
+    let id = await item.create(ctx.request.body);
+    ctx.type = "json";
+    if (id) {
+      ctx.status = 200;
+      ctx.body = JSON.stringify({ id: id });
+    } else {
+      ctx.status = 400;
+      ctx.body = JSON.stringify({ id: 0 });
+    }
+  })
+
+  .put("/item/", async (ctx, next) => {
+    let Items = ctx.request.body;
+    let id = await item.update(ctx.request.body);
+    ctx.type = "json";
+    if (id) {
+      ctx.status = 200;
+      ctx.body = JSON.stringify({ id: id });
+    } else {
+      ctx.status = 400;
+      ctx.body = JSON.stringify({ id: 0 });
+    }
   })
   .delete("/item/:id", async (ctx, next) => {
     ctx.status = 204;

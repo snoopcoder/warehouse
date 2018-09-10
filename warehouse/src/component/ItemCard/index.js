@@ -9,7 +9,7 @@ import CommenArea from "./components/CommenArea";
 import EditItemName from "./components/EditItemName";
 import EditCountArea from "./components/EditCountArea";
 import EditComment from "./components/EditComment";
-
+import PhotoBox from "./components/PhotoBox";
 import ItemCardHoc from "../hoc/ItemCardHoc.js";
 
 class ItemCard extends Component {
@@ -90,23 +90,33 @@ class ItemCard extends Component {
               </div>
             </div>
           </div>
-          <div id="itemphoto" className=" d-none d-sm-block" />
+          <div id="itemphoto" className=" d-none d-sm-block">
+            <PhotoBox {...this.props} />
+          </div>
         </div>
         <div style={{ marginTop: "15px" }}>
           <Button
             onClick={this.props.changeHandler}
-            disabled={!this.props.EditMode}
+            disabled={!this.props.EditMode || !this.props.nameValid}
             outline
             color="info"
             style={{ width: "100px" }}
           >
             Сохранить
           </Button>{" "}
-          <Link to={"/box/" + this.props.Items.parentId + "/show"}>
+          {/* <Link to={"/box/" + this.props.Items.parentId + "/show"}>
             <Button outline color="info" style={{ width: "100px" }}>
               Закрыть
             </Button>
-          </Link>
+          </Link> */}
+          <Button
+            onClick={() => this.props.changeHandler("close")}
+            outline
+            color="info"
+            style={{ width: "100px" }}
+          >
+            Закрыть
+          </Button>
         </div>
       </div>
     );

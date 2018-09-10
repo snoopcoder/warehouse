@@ -1,4 +1,5 @@
 import React from "react";
+import _ from "lodash";
 
 function ItemCardHoc(Component, apiUrl) {
   class ItemCardHocClass extends React.Component {
@@ -14,6 +15,7 @@ function ItemCardHoc(Component, apiUrl) {
 
       switch (inputName) {
         case "changeName": {
+          this.props.checkName(value);
           changeObj.changeName = value;
           break;
         }
@@ -53,43 +55,44 @@ function ItemCardHoc(Component, apiUrl) {
             handleSubmit={this.handleSubmit}
             checkName={this.checkName}*/
 
-    changeHandler = () => {
-      let Items = this.props.Items;
-      let changeObj = this.state.changeObj;
-      for (let change in changeObj) {
-        switch (change) {
-          case "changeName": {
-            console.log(change, changeObj[change]);
-            Items.name = changeObj.changeName;
-            break;
-          }
-          case "changeCountType": {
-            console.log(change, changeObj[change]);
-            Items.count_type = changeObj.changeCountType;
-            break;
-          }
-          case "changeComment": {
-            console.log(change, changeObj[change]);
-            Items.comment = changeObj.changeComment;
-            break;
-          }
-          case "changeManyCount": {
-            console.log(change, changeObj[change]);
-            Items.count_many = changeObj.changeManyCount;
-            break;
-          }
-          case "changeMachCount": {
-            console.log(change, changeObj[change]);
-            Items.count_mach = changeObj.changeMachCount;
-            break;
+    changeHandler = Do => {
+      if (Do === "close") {
+        this.props.handleSubmit(null);
+        this.setState({ changeObj: {} });
+      } else {
+        let Items = _.cloneDeep(this.props.Items);
+        let changeObj = this.state.changeObj;
+        for (let change in changeObj) {
+          switch (change) {
+            case "changeName": {
+              Items.name = changeObj.changeName;
+              break;
+            }
+            case "changeCountType": {
+              Items.count_type = changeObj.changeCountType;
+              break;
+            }
+            case "changeComment": {
+              Items.comment = changeObj.changeComment;
+              break;
+            }
+            case "changeManyCount": {
+              Items.count_many = changeObj.changeManyCount;
+              break;
+            }
+            case "changeMachCount": {
+              Items.count_mach = changeObj.changeMachCount;
+              break;
+            }
           }
         }
+        this.props.handleSubmit(Items);
+        this.setState({ changeObj: {} });
       }
-      this.props.handleSubmit(Items);
-      this.setState({ changeObj: {} });
     };
 
     render() {
+      console.log(this.props.nameValid);
       return (
         <Component
           changeHandler={this.changeHandler}

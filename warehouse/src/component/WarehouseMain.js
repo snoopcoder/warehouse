@@ -20,6 +20,8 @@ import update from "immutability-helper";
 import Loadable from "react-loading-overlay";
 import Baron from "react-baron/dist/es5";
 import axios from "axios";
+import moment from "moment";
+import _ from "lodash";
 import { SSL_OP_CIPHER_SERVER_PREFERENCE } from "constants";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -65,18 +67,7 @@ class WarehouseMain extends Component {
   };
 
   /*
-  
-      items: {
-      id: "",
-      type: "",
-      name: "",
-      date: "",
-      count: "",
-      breadcrumbs: "",
-      imgUrl: "/noimg_m.jpg",
-      content: ""
-    }
-  */
+    */
   //проверить коробка это или нет
   // вывести содержимое если это коробка
 
@@ -127,12 +118,10 @@ class WarehouseMain extends Component {
         break;
       }
       case "MarkupListAdd": {
-        //'{"/box/" + this.state.Items.id + "/new"}
         this.props.history.push("/box/" + this.props.match.params.id + "/new");
         break;
       }
       case "MarkupNewNotInterested": {
-        //'{"/box/" + this.state.Items.id + "/new"}
         this.props.history.push("/box/" + this.props.match.params.id + "/show");
         break;
       }
@@ -151,8 +140,17 @@ class WarehouseMain extends Component {
   handleSidePanel = Do => {
     switch (Do) {
       case "add": {
-        //'{"/box/" + this.state.Items.id + "/new"}
-        this.props.history.push("/box/" + this.props.match.params.id + "/new");
+        this.setState(
+          {
+            mode: "edit"
+          },
+          () => {
+            this.props.history.push(
+              "/box/" + this.props.match.params.id + "/new"
+            );
+          }
+        );
+
         break;
       }
       case "edit": {
@@ -165,12 +163,62 @@ class WarehouseMain extends Component {
     console.log(Do);
   };
 
-  handleSubmit = async obj => {
-    console.log(obj);
-    this.setState({
-      mode: "show"
-    });
-    return;
+  saveData = async Items => {
+    let method = Items.id === "" ? "post" : "put";
+    fetch("http://127.0.0.1:3001/item", {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Items)
+    })
+      .then(response => {
+        return response.json();
+      }) //после запроса на отправку данных, и при put и при post мы получим обратно Id предмета
+      .then(create => {
+        //и после успешного добавления данных в базе мы можем сразе запросить свежие данные, в
+        console.log("Update:", create.id); //которых например будут обновлены даты перемещения изменения. и нет разницы что для нового
+        this._loadAsyncData(create.id); //что для уже существующего
+        this.props.history.push("/box/" + create.id + "/show");
+      })
+      .catch(e => {
+        console.log(e);
+        //Ошибка, возвращаеся к родителю
+        //ToDo показать попап об ошибке
+        this.props.history.push("/box/" + Items.parentId + "/show");
+      });
+  };
+
+  handleSubmit = async Items => {
+    if (Items) {
+      console.log(Items);
+      //очистим специальные режимы и сразу отобразим изменения не дожидась их сохранения на сервере
+      //когда сервер примет измениния ответит что все, страница загружит данные и снова обновить страницу
+      //если все хорошо обновятся только ссотвестующие даты обновлений, если возникнет ошибка то данные вернутся к \
+      //своим старым значениям, возможно тогда будет уместным изобразить попап с информацией об ошибке сохранения
+      this.setState({
+        mode: "show",
+        Items: Items
+      });
+      //сравнить данные старые и новыие если неоюходимо то синхронизировать их
+      if (!_.isEqual(this.state.Items, Items)) {
+        await this.saveData(Items);
+      }
+    } else {
+      this.setState({
+        mode: "normal"
+      });
+      this.props.history.push("/box/" + this.state.Items.parentId + "/show"); //this.props.Items.parentId + "/show"
+    }
+
+    /*
+ToDo
+картинки будут загружаться во время редактирования предмета. пока картинки не загрузятся нелья нажать сохранить
+картинки загружаеются, их имена вносятся в таблицу ImgTemp (для обработки случаев если предмет так и не будет созадан и картинки станут мусором)
+ImgTemp очищается по расписанию, при этом удаляются все картинки, которые находятся в ImgTemp но добавлены более часа назад.
+по мере загруки картинок, от сервера возращаются их имена на сервере, эта инфа вносится через пробел в поле logo в json который будет отправлен на сервер 
+в базе все пренадлелжащие предмету картинки перечислены через пробел в поле logo
+при сохранении предмета, имена удаляются из ImgTemp
+если вносятся корректировки в logo базе, код просматривает какие картинки теперь отсутвуют, и вносит их в ImgTemp, и поэтому через час они будут удалены
+*/
 
     // const data = new FormData();
     // if (obj.myFile !== "") data.append("myFile", obj.myFile, "logo.jpg");
@@ -221,7 +269,12 @@ class WarehouseMain extends Component {
   };
 
   checkName = async name => {
-    if (name.length < 3) {
+    console.log("name");
+    if (name === "Новый предмет") {
+      this.setState({ nameValid: false });
+    } else if (name === this.state.Items.name) {
+      this.setState({ nameValid: true });
+    } else if (name.length < 3) {
       //слишком короткое имя
       this.setState({ nameValid: false });
     } else if (isNumber(name)) {
@@ -263,11 +316,10 @@ class WarehouseMain extends Component {
       // происходит смена режима работы с show на new
       _Do = "new";
       return {
-        //Items: Arr,
         prevDo: _Do,
-        nameValid: false,
+        nameValid: true,
         //запросим новые данные
-        Items: null,
+        DataIsActual: null,
         panelNow: changePanel(doNow)
       };
     }
@@ -281,7 +333,7 @@ class WarehouseMain extends Component {
       return {
         prevDo: _Do,
         //запросим новые данные
-        Items: null,
+        DataIsActual: null,
         panelNow: changePanel(doNow)
       };
     }
@@ -294,10 +346,10 @@ class WarehouseMain extends Component {
         nextProps.match.params.id
       );
       return {
-        Items: null,
+        DataIsActual: null,
         prevId: nextProps.match.params.id,
         prevDo: _Do,
-        nameValid: false,
+        nameValid: true,
         panelNow: changePanel(doNow)
       };
     }
@@ -311,7 +363,7 @@ class WarehouseMain extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.Items === null) {
+    if (this.state.DataIsActual === null) {
       console.log("componentDidUpdate", this.props.match.params.id);
       this._loadAsyncData(this.props.match.params.id);
     }
@@ -321,9 +373,9 @@ class WarehouseMain extends Component {
     let main = null;
     let breadcrumb = null;
     //условный рендеринг
-    if (!this.state.Items) {
+    if (!this.state.DataIsActual) {
       //не загружены данные отображаем калач
-      breadcrumb = <Breadcrumbs />;
+      breadcrumb = <Breadcrumbs updateDisabled={true} />;
       main = <div>loading</div>;
     } else if (this.props.match.params.id == 0) {
       //это рут
@@ -352,12 +404,20 @@ class WarehouseMain extends Component {
             mode={this.state.mode}
             nameValid={this.state.nameValid}
           /> */}
-          <NewItemCard
+          {/* <NewItemCard
             checkName={this.checkName}
             handleSubmit={this.handleSubmit}
             nameValid={this.state.nameValid}
             parentId={this.props.match.params.id}
             mode={this.state.mode}
+          /> */}
+          <ItemCard
+            EditMode={this.state.mode === "edit" ? true : false}
+            Items={this.state.Items}
+            handleSubmit={this.handleSubmit}
+            checkName={this.checkName}
+            nameValid={this.state.nameValid}
+            checkName={this.checkName}
           />
         </div>
       );
@@ -377,6 +437,8 @@ class WarehouseMain extends Component {
             EditMode={this.state.mode === "edit" ? true : false}
             Items={this.state.Items}
             handleSubmit={this.handleSubmit}
+            checkName={this.checkName}
+            nameValid={this.state.nameValid}
             checkName={this.checkName}
           />
         </div>
@@ -443,22 +505,29 @@ class WarehouseMain extends Component {
   _FillModel(itemData) {
     if (this.state.prevDo === "new") {
       let item = {
-        id: "undefined",
-        type: "",
+        id: "",
         name: "Новый предмет",
-        date: "",
-        count: "",
+        parentId: itemData.id,
+        comment: "",
+        date_created: moment(),
+        date_changed: moment(),
+        date_moved: moment(),
         breadcrumbs: "",
-        imgUrl: "/noimg_m.jpg",
-        content: ""
+        item_img: "/noimg.jpg",
+        count_type: "many",
+        count_mach: "много",
+        count_many: "1"
       }; //{BOX: 10, name: "коробка 1"}
+      //крошки для нового элемента берем от родителя
       let breadcrumbs = itemData.breadcrumbs;
+      //кореектируем их добавляя в них самого родителя
       breadcrumbs.push({ BOX: itemData.id, name: itemData.name });
       item.breadcrumbs = breadcrumbs;
       itemData = item;
     }
     this.setState({
-      Items: itemData
+      Items: itemData,
+      DataIsActual: true
     });
   }
 }

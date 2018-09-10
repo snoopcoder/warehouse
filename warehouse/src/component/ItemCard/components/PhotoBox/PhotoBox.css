@@ -1,0 +1,23 @@
+#PhotoBoxContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction:column;
+}
+#BigPhoto{
+    flex: 1 0 auto;    
+}
+#Gallery{
+    flex: 0 0 auto;
+   height: 100px;
+   
+}
+
+#GalleryList
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: space-between;
+    align-items: center;  
+}
