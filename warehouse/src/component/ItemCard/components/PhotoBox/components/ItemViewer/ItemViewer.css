@@ -1,0 +1,74 @@
+.img{
+
+    display: flex;
+    flex-direction:row;
+    align-items: flex-end;
+    padding: 0;
+    margin: 0;
+    width: 150px;
+  height: 170px;
+    background: url(https://drscdn.500px.org/photo/273678235/q%3D80_m%3D1000/v2?webp=true&sig=c22f764a09d5be881dd5323c73a617c3bfe39560bd4c2bcea62679a375871e61) no-repeat center top;
+}
+.img-overlay{
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 80%;
+    background: rgba(255,0,0,0.3);
+    transition: height .2s ease-in;
+}
+
+.img1{
+    display: flex;
+    flex-direction:column;
+    align-items: flex-end;
+    
+   
+    padding: 0;
+    margin: 0;
+    width: 150px;
+    height: 170px;
+    background: url(https://drscdn.500px.org/photo/273678235/q%3D80_m%3D1000/v2?webp=true&sig=c22f764a09d5be881dd5323c73a617c3bfe39560bd4c2bcea62679a375871e61) no-repeat center top;
+}
+.img-overlay1{ 
+    padding: 0;
+    margin: 0;
+    width: 30px;
+    height: 30px;   
+    transition: height .2s ease-in;
+
+}
+
+
+#Layer_1:hover {
+    transition: all 0.05s ease-in-out;   
+}
+
+
+#Layer_1:hover {
+    cursor: pointer;  
+}
+
+#Layer_1:active {
+    filter: brightness(90%);
+    transform-origin: 50% 50%;
+    transform: scale(0.9);
+}
+
+.fade-enter {
+    opacity: 0.01;
+  }
+  
+  .fade-enter-active {
+    opacity: 1;
+    transition: opacity 1s;
+  }
+  
+  .fade-leave {
+    opacity: 1;
+  }
+  
+  .fade-leave-active {
+    opacity: 0;
+    transition: opacity 0.5s;
+  }

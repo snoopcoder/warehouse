@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import PhotoBig from "./components/PhotoBig";
 import PhotoGalleryItem from "./components/PhotoGalleryItem";
-import "./PhotoBox.css";
+import ImageUploader from "./components/ImageUploader";
+import ItemViewer from "./components/ItemViewer";
 
-let PhotoArr = [
-  "http://127.0.0.1:3001/public/aba964dd-c4e7-40bf-8c38-7fff9022a95c.jpg",
-  "http://127.0.0.1:3001/public/2ecb6499-40ee-4447-96d1-8e6f4a1543af.jpg",
-  "http://127.0.0.1:3001/public/931aa8db-e803-4764-bbd5-06d2d750af30.jpg"
-];
+import PhotoBoxHoc from "../../../hoc/PhotoBoxHoc.js";
+
+import "./PhotoBox.css";
 
 class PhotoBox extends Component {
   constructor(props) {
@@ -15,7 +14,8 @@ class PhotoBox extends Component {
     this.state = {
       item_img: props.Items.item_img,
       img: props.Items.item_img ? props.Items.item_img.split(" ") : [],
-      index: 0
+      index: 0,
+      files: []
     };
   }
 
@@ -34,8 +34,14 @@ class PhotoBox extends Component {
     this.setState({ index: i });
   };
 
+  ImageProssing = file => {
+    let files = this.state.fales;
+    //ToDo подумать над случаем кошгда добавляются одинаковые фотографии
+    files.push(file);
+    this.setState({ files });
+  };
+
   render() {
-    console.log(this.state.img.length);
     const GalleryItems = (
       <div id="GalleryList">
         {this.state.img.length === 1
@@ -53,7 +59,7 @@ class PhotoBox extends Component {
       </div>
     );
 
-    return (
+    let NormalMode = (
       <div id="PhotoBoxContainer">
         <div id="BigPhoto">
           <PhotoBig
@@ -65,8 +71,17 @@ class PhotoBox extends Component {
         <div id="Gallery">{GalleryItems}</div>
       </div>
     );
+    //------
+
+    let EditMode = (
+      <div id="EditDiv">
+        <ImageUploader ImageProssing={this.ImageProssing} />
+        <ItemViewer />
+      </div>
+    );
+
+    return <div>{this.props.EditMode ? EditMode : NormalMode}</div>;
   }
 }
-//this.props.PhotoArr.map()
 
-export default PhotoBox;
+export default PhotoBoxHoc(PhotoBox);
