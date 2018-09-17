@@ -15,7 +15,8 @@ class PhotoBox extends Component {
       item_img: props.Items.item_img,
       img: props.Items.item_img ? props.Items.item_img.split(" ") : [],
       index: 0,
-      files: []
+      files: [],
+      ImageData
     };
   }
 
@@ -34,10 +35,18 @@ class PhotoBox extends Component {
     this.setState({ index: i });
   };
 
-  ImageProssing = file => {
+  ImageReadyFunc = (name, blob, loadstatus) => {
+    //эта функция должна получить от хока блоб, имя файла, и статус его загрузки
+    let ImageData = this.state.ImageData[name];
+  };
+
+  ImageProssing = files => {
     let files = this.state.fales;
     //ToDo подумать над случаем кошгда добавляются одинаковые фотографии
-    files.push(file);
+    for (let file of e.target.files) {
+      this.props.ImageLoad(file, this.ImageReadyFunc);
+      files.push(file);
+    }
     this.setState({ files });
   };
 
@@ -76,7 +85,10 @@ class PhotoBox extends Component {
     let EditMode = (
       <div id="EditDiv">
         <ImageUploader ImageProssing={this.ImageProssing} />
-        <ItemViewer />
+        <ItemViewer
+          img="https://drscdn.500px.org/photo/273678235/q%3D80_m%3D1000/v2?webp=true&sig=c22f764a09d5be881dd5323c73a617c3bfe39560bd4c2bcea62679a375871e61"
+          loadstatus=""
+        />
       </div>
     );
 

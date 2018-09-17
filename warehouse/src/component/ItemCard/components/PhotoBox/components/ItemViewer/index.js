@@ -73,7 +73,13 @@ class ItemViewer extends Component {
 
     let LoaderClass = this.state.showDelete ? "img1" : "img";
     let GaleryItem = (
-      <div className={LoaderClass} onClick={this.onClick}>
+      <div
+        style={{
+          background: `url(${this.props.img}) no-repeat center top`
+        }}
+        className={LoaderClass}
+        onClick={this.onClick}
+      >
         {this.state.showDelete ? Dropper : Loader}
       </div>
     );

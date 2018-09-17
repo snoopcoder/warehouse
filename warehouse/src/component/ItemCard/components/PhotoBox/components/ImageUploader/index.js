@@ -65,10 +65,7 @@ class ImageUploader extends React.Component {
 
   _handleImageChange(e) {
     e.preventDefault();
-    let reader = new FileReader();
-    for (let file of e.target.files) {
-      this.props.ImageProssing(file);
-    }
+    this.props.ImageProssing(e.target.files);
 
     // let file = e.target.files[0];
     // //Это мой костыльный эвент. так как оригинал передавать нельзя, браузел его обнуляет
@@ -113,6 +110,7 @@ class ImageUploader extends React.Component {
               <input
                 type="file"
                 class="input"
+                multiple
                 accept="image/jpeg"
                 onChange={e => this._handleImageChange(e)}
               />
