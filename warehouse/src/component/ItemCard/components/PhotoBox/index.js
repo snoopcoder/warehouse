@@ -40,6 +40,10 @@ class PhotoBox extends Component {
     let ImageData = this.state.ImageData[name];
   };
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return null;
+  }
+
   render() {
     const GalleryItems = (
       <div id="GalleryList">
@@ -73,9 +77,17 @@ class PhotoBox extends Component {
     //------
 
     let EditMode = (
-      <div id="EditDiv">
+      <div id="PhotoBoxContainerEdit">
         <ImageUploader ImageProssing={this.props.ImageProssing} />
         {/* отобразить сначала картинки уже пренадлежащие предмету, а после вывести структуру item_img_RAW */}
+        {this.state.img.map((img, i) => (
+          <div key={img.toString()}>
+            <ItemViewer
+              img={"http://127.0.0.1:3001/public/" + img}
+              loadstatus=""
+            />
+          </div>
+        ))}
         <ItemViewer
           img="https://drscdn.500px.org/photo/273678235/q%3D80_m%3D1000/v2?webp=true&sig=c22f764a09d5be881dd5323c73a617c3bfe39560bd4c2bcea62679a375871e61"
           loadstatus=""

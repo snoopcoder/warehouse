@@ -4,7 +4,7 @@ import "./PhotoGalleryItem.css";
 class PhotoGalleryItem extends Component {
   render() {
     return (
-      <div className="shadow-border">
+      <div className="imgPhotoGallery">
         <img
           class="imgPhotoGalleryItem"
           src={this.props.img}

@@ -10,6 +10,10 @@ function ItemCardHoc(Component, apiUrl) {
 
     componentDidMount() {}
 
+    Handler_item_img_RAW = () => {};
+
+    //cur_file_name, blob, load_status, ImgNameOnServer
+
     inputHandler = (inputName, value, SubmitNow) => {
       // третий параметр используется елси поле ввода само вызывает функцию сабмита, для случаев кога на форме меняется только одно значение
       let changeObj = this.state.changeObj;
@@ -38,6 +42,7 @@ function ItemCardHoc(Component, apiUrl) {
         }
         case "changeImg": {
           //закончил тут
+          this.setState({ item_img_RAW: value });
         }
       }
       if (SubmitNow) {

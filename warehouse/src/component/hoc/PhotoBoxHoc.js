@@ -53,12 +53,11 @@ function PhotoBoxHoc(Component, apiUrl) {
       item_img_RAW[cur_file_name].load_status = load_status;
       if (ImgNameOnServer)
         item_img_RAW[cur_file_name].ImgNameOnServer = ImgNameOnServer;
-      Items.item_img_RAW = item_img_RAW;
       //this.props.inputHandler("changeComment", e.target.value);
       this.props.inputHandler("changeImg", item_img_RAW);
     };
 
-    ImageLoad = (file, ImageReadyFunc) => {
+    ImageLoad = file => {
       let reader = new FileReader();
 
       // let file = e.target.files[0];
@@ -93,7 +92,7 @@ function PhotoBoxHoc(Component, apiUrl) {
             response => response.json() // if the response is a JSON object
           )
           .then(ImgNameOnServer => {
-            ImageReadyFunc(file.name, reader.result, 100);
+            this.FillModel(file.name, reader.result, 100);
             console.log(ImgNameOnServer); // Handle the success response object
             return ImgNameOnServer;
           })

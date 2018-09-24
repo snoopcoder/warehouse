@@ -75,7 +75,9 @@ class ItemViewer extends Component {
     let GaleryItem = (
       <div
         style={{
-          background: `url(${this.props.img}) no-repeat center top`
+          background: `url(${this.props.img}) no-repeat center center`,
+          backgroundSize: "contain",
+          backgroundClip: "content-box"
         }}
         className={LoaderClass}
         onClick={this.onClick}
@@ -86,7 +88,7 @@ class ItemViewer extends Component {
 
     return (
       <div>
-        <div>
+        <div className="ItemViwer">
           <Fader>{this.state.show ? GaleryItem : ""}</Fader>
         </div>
       </div>
