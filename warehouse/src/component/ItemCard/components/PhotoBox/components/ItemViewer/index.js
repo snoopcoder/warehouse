@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import CSSTransitionGroup from "react-addons-css-transition-group";
+import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 import "./ItemViewer.css";
 import {
   ButtonDropdown,

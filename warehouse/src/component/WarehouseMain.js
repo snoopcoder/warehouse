@@ -513,7 +513,7 @@ ImgTemp очищается по расписанию, при этом удаля
         date_changed: moment(),
         date_moved: moment(),
         breadcrumbs: "",
-        item_img: "/noimg.jpg",
+        item_img: "noimg.jpg",
         count_type: "many",
         count_mach: "много",
         count_many: "1"

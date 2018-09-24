@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import PhotoBoxHoc from "./PhotoBoxHoc.js";
 
 function ItemCardHoc(Component, apiUrl) {
   class ItemCardHocClass extends React.Component {
@@ -110,4 +111,4 @@ function ItemCardHoc(Component, apiUrl) {
   return ItemCardHocClass;
 }
 
-export default ItemCardHoc;
+export default PhotoBoxHoc(ItemCardHoc);

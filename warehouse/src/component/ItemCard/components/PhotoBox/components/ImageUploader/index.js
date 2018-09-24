@@ -9,8 +9,8 @@ class UploadingTo extends Component {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 35.808 35.808"
-        width="32"
-        height="32"
+        width="16"
+        height="16"
       >
         <g>
           <path

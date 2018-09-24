@@ -17,7 +17,6 @@
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "react": "^16.4.0",
-    "react-addons-css-transition-group": "^15.6.2",
     "react-autosize-textarea": "^4.0.0",
     "react-baron": "^3.0.0",
     "react-custom-scrollbars": "^4.2.1",

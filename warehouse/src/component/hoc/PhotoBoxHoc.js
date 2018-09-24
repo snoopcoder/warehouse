@@ -1,56 +1,111 @@
 import React from "react";
 import _ from "lodash";
+import axios from "axios";
 
 function PhotoBoxHoc(Component, apiUrl) {
   class PhotoBoxHocClass extends React.Component {
-    state = {
-      changeObj: {}
-    };
+    constructor(props) {
+      super(props);
+      this.state = {
+        name: ""
+      };
+    }
+
+    /*
+
+    item_img_RAW {cur_file_name:{blob,
+      load_status},
+      ...}
+
+    воркер получает данные от инпута с одно или несколькими картинками, создает для них блобы, далее добавляет их в структуру item_img_RAW
+    и передает ее выше. по мере загрузки обновляет item_img_RAW и передает ее выше, когда загрузка закончена он заменяет имя в файловой
+    системе исходнике на имя полученное с сервера, для возможности сразу удалить ее тут же крестиком
+    а компонент будет отображатеть два набора картинок item_img и item_img_RAW таким образом новые картинки будут всегда в конце вне зависимости
+    от имени что будет удобно чтоб их видеть
+    воркер загрузчик картинок
+    Этот воркер получает даныые о картинках, выбирает картинку заглушку(на время даунлода) и начинает грузить    
+    перед этим  выставляет статус загрузки и начинает качать картинки(можно по очереди можно паралельно, надо подумать)
+    по мере загрузки обновляет статус загрузки, а по ее окончании меняет картинку заглушку на нужную
+    при аплоаде воркер берет блоб открытой картинки и ставляет ее в модель и не использует заглушку    
+    */
+
+    /*воркер дроппер
+    этот воркер для удалаение картинок, получает имя картинки и удлает ее из модели и с сервера
+    */
 
     componentDidMount() {}
+
+    //получить информацио о выбраных файлах от компонента
+
+    ImageProssing = files => {
+      //ToDo подумать над случаем кошгда добавляются одинаковые фотографии
+      for (let file of files) {
+        this.ImageLoad(file);
+      }
+    };
+
+    FillModel = (cur_file_name, blob, load_status, ImgNameOnServer) => {
+      let Items = _.cloneDeep(this.props.Items);
+      let item_img_RAW = Items.item_img_RAW;
+
+      if (ImgNameOnServer) {
+        item_img_RAW[cur_file_name].blob = blob;
+        item_img_RAW[cur_file_name].load_status = load_status;
+        item_img_RAW[cur_file_name].ImgNameOnServer = ImgNameOnServer;
+      } else {
+        item_img_RAW[cur_file_name].blob = blob;
+        item_img_RAW[cur_file_name].load_status = load_status;
+      }
+      this.props.handleSubmit(Items);
+    };
 
     ImageLoad = (file, ImageReadyFunc) => {
       let reader = new FileReader();
 
-          // let file = e.target.files[0];
-    // //Это мой костыльный эвент. так как оригинал передавать нельзя, браузел его обнуляет
-    // let event = {};
-    // event.target = {};
-    // event.target.value = file;
-   
-    reader.onloadend = () => {
-      ImageReadyFunc(file,reader.result,0);
-      const data = new FormData();
-    if (file!== "") data.append("myFile", reader.result, "logo.jpg");
-    // data.append("nameInput", obj.nameInput);
-    // data.append("countInput", obj.countInput);
-    // data.append("TextAreaInput", obj.TextAreaInput);
-    // data.append("parentId", obj.parentId);
+      // let file = e.target.files[0];
+      // //Это мой костыльный эвент. так как оригинал передавать нельзя, браузел его обнуляет
+      // let event = {};
+      // event.target = {};
+      // event.target.value = file;
 
-    fetch("http://127.0.0.1:3001/image", {
-      method: "POST",
-      body: data
-    })
-      .then(
-        response => response.json() // if the response is a JSON object
-      )
-      .then(ImgNameOnServer => {
-        ImageReadyFunc(file,reader.result,100)
-        console.log(ImgNameOnServer); // Handle the success response object
-      })
-      .catch(error => {
-        console.log(error); // Handle the error response object
-      })
-      .then(() => {
-        this.setState({
-          mode: "show"
-        });
-        this.props.history.push("/box/" + this.props.match.params.id + "/show");
-    //   });
-      
-   
-    };
-        reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        //ImageReadyFunc(file, reader.result, 0);
+        this.FillModel(file.name, reader.result, 0);
+        const data = new FormData();
+        data.append("myFile", reader.result, "logo.jpg");
+        // data.append("nameInput", obj.nameInput);
+        // data.append("countInput", obj.countInput);
+        // data.append("TextAreaInput", obj.TextAreaInput);
+        // data.append("parentId", obj.parentId);
+
+        let config = {
+          onUploadProgress: progressEvent => {
+            let percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            if (percentCompleted === 100) percentCompleted = 99;
+            this.FillModel(file.name, reader.result, percentCompleted);
+          }
+        };
+
+        axios
+          .put("http://127.0.0.1:3001/image", data, config)
+          .then(
+            response => response.json() // if the response is a JSON object
+          )
+          .then(ImgNameOnServer => {
+            ImageReadyFunc(file.name, reader.result, 100);
+            console.log(ImgNameOnServer); // Handle the success response object
+            return ImgNameOnServer;
+          })
+          .catch(error => {
+            console.log(error); // Handle the error response object
+          })
+          .then(ImgNameOnServer => {
+            this.FillModel(file.name, reader.result, 100, ImgNameOnServer);
+          });
+      };
+      reader.readAsDataURL(file);
     };
 
     render() {

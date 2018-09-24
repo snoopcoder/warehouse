@@ -4,7 +4,7 @@ import PhotoGalleryItem from "./components/PhotoGalleryItem";
 import ImageUploader from "./components/ImageUploader";
 import ItemViewer from "./components/ItemViewer";
 
-import PhotoBoxHoc from "../../../hoc/PhotoBoxHoc.js";
+//import PhotoBoxHoc from "../../../hoc/PhotoBoxHoc.js";
 
 import "./PhotoBox.css";
 
@@ -38,16 +38,6 @@ class PhotoBox extends Component {
   ImageReadyFunc = (name, blob, loadstatus) => {
     //эта функция должна получить от хока блоб, имя файла, и статус его загрузки
     let ImageData = this.state.ImageData[name];
-  };
-
-  ImageProssing = files => {
-    let files = this.state.fales;
-    //ToDo подумать над случаем кошгда добавляются одинаковые фотографии
-    for (let file of e.target.files) {
-      this.props.ImageLoad(file, this.ImageReadyFunc);
-      files.push(file);
-    }
-    this.setState({ files });
   };
 
   render() {
@@ -96,4 +86,4 @@ class PhotoBox extends Component {
   }
 }
 
-export default PhotoBoxHoc(PhotoBox);
+export default PhotoBox;
