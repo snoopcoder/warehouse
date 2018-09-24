@@ -11,6 +11,7 @@ import EditCountArea from "./components/EditCountArea";
 import EditComment from "./components/EditComment";
 import PhotoBox from "./components/PhotoBox";
 import ItemCardHoc from "../hoc/ItemCardHoc.js";
+import PhotoBoxHoc from "../hoc/PhotoBoxHoc.js";
 
 class ItemCard extends Component {
   state = {
@@ -123,4 +124,4 @@ class ItemCard extends Component {
   }
 }
 
-export default ItemCardHoc(ItemCard);
+export default ItemCardHoc(PhotoBoxHoc(ItemCard));

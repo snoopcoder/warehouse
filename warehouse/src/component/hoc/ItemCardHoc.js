@@ -1,11 +1,11 @@
 import React from "react";
 import _ from "lodash";
-import PhotoBoxHoc from "./PhotoBoxHoc.js";
 
 function ItemCardHoc(Component, apiUrl) {
   class ItemCardHocClass extends React.Component {
     state = {
-      changeObj: {}
+      changeObj: {},
+      item_img_RAW: {}
     };
 
     componentDidMount() {}
@@ -35,6 +35,9 @@ function ItemCardHoc(Component, apiUrl) {
         case "changeMachCount": {
           changeObj.changeMachCount = value;
           break;
+        }
+        case "changeImg": {
+          //закончил тут
         }
       }
       if (SubmitNow) {
@@ -98,6 +101,7 @@ function ItemCardHoc(Component, apiUrl) {
         <Component
           changeHandler={this.changeHandler}
           inputHandler={this.inputHandler}
+          item_img_RAW={this.state.item_img_RAW}
           {...this.props}
         />
       );
@@ -111,4 +115,4 @@ function ItemCardHoc(Component, apiUrl) {
   return ItemCardHocClass;
 }
 
-export default PhotoBoxHoc(ItemCardHoc);
+export default ItemCardHoc;

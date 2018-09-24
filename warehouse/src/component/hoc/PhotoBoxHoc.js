@@ -17,11 +17,12 @@ function PhotoBoxHoc(Component, apiUrl) {
       load_status},
       ...}
 
-    воркер получает данные от инпута с одно или несколькими картинками, создает для них блобы, далее добавляет их в структуру item_img_RAW
-    и передает ее выше. по мере загрузки обновляет item_img_RAW и передает ее выше, когда загрузка закончена он заменяет имя в файловой
-    системе исходнике на имя полученное с сервера, для возможности сразу удалить ее тут же крестиком
+    воркер получает данные от инпута с одной или несколькими картинками, создает для них блобы, далее добавляет их в структуру item_img_RAW
+    и передает ее выше. по мере загрузки обновляет item_img_RAW и передает ее выше, когда загрузка закончена, для возможности сразу удалить ее крестиком
+    тут же в форме нового элемента, заполняется поле item_img_RAW с именем ImgNameOnServer. компонент ItemViewer перестает отображеть прогресс бар и русет крестик,
+    через который мы должно иметь возможно удалить картинку.
     а компонент будет отображатеть два набора картинок item_img и item_img_RAW таким образом новые картинки будут всегда в конце вне зависимости
-    от имени что будет удобно чтоб их видеть
+    от имени что будет удобно чтоб их отделить визуально
     воркер загрузчик картинок
     Этот воркер получает даныые о картинках, выбирает картинку заглушку(на время даунлода) и начинает грузить    
     перед этим  выставляет статус загрузки и начинает качать картинки(можно по очереди можно паралельно, надо подумать)
@@ -45,18 +46,16 @@ function PhotoBoxHoc(Component, apiUrl) {
     };
 
     FillModel = (cur_file_name, blob, load_status, ImgNameOnServer) => {
-      let Items = _.cloneDeep(this.props.Items);
-      let item_img_RAW = Items.item_img_RAW;
+      let item_img_RAW = _.cloneDeep(this.props.item_img_RAW);
+      if (!item_img_RAW[cur_file_name]) item_img_RAW[cur_file_name] = {};
 
-      if (ImgNameOnServer) {
-        item_img_RAW[cur_file_name].blob = blob;
-        item_img_RAW[cur_file_name].load_status = load_status;
+      item_img_RAW[cur_file_name].blob = blob;
+      item_img_RAW[cur_file_name].load_status = load_status;
+      if (ImgNameOnServer)
         item_img_RAW[cur_file_name].ImgNameOnServer = ImgNameOnServer;
-      } else {
-        item_img_RAW[cur_file_name].blob = blob;
-        item_img_RAW[cur_file_name].load_status = load_status;
-      }
-      this.props.handleSubmit(Items);
+      Items.item_img_RAW = item_img_RAW;
+      //this.props.inputHandler("changeComment", e.target.value);
+      this.props.inputHandler("changeImg", item_img_RAW);
     };
 
     ImageLoad = (file, ImageReadyFunc) => {
@@ -109,7 +108,7 @@ function PhotoBoxHoc(Component, apiUrl) {
     };
 
     render() {
-      return <Component {...this.props} />;
+      return <Component ImageProssing={this.ImageProssing} {...this.props} />;
     }
   }
 

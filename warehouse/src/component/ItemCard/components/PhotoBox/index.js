@@ -74,7 +74,8 @@ class PhotoBox extends Component {
 
     let EditMode = (
       <div id="EditDiv">
-        <ImageUploader ImageProssing={this.ImageProssing} />
+        <ImageUploader ImageProssing={this.props.ImageProssing} />
+        {/* отобразить сначала картинки уже пренадлежащие предмету, а после вывести структуру item_img_RAW */}
         <ItemViewer
           img="https://drscdn.500px.org/photo/273678235/q%3D80_m%3D1000/v2?webp=true&sig=c22f764a09d5be881dd5323c73a617c3bfe39560bd4c2bcea62679a375871e61"
           loadstatus=""
